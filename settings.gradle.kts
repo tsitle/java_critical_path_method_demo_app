@@ -1,0 +1,1 @@
+rootProject.name = "app_demo_critical_path_method"
