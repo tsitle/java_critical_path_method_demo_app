@@ -1,0 +1,9 @@
+TaskId,Name,Duration,DependenciesTaskIdList,StartedAtUTC,FinishedAtUTC
+Alpha,"T101",6,none,2026-01-05T02:00:00Z,2026-01-12 04:35:00
+Beta,"T102",4,none,,
+Gamma,"T103",3,Alpha,,
+Delta,"T104",4,Beta,,
+Epsilon,"T105",3,Beta,,
+Zeta,"T106",10,none,2026-01-05,2026-01-16 03:00:00
+Eta,"T107",3,Epsilon:Zeta,,
+Theta,"T108",2,Gamma:Delta,,

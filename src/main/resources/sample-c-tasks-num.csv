@@ -1,0 +1,9 @@
+TaskId,Name,Duration,DependenciesTaskIdList,StartedAtUTC,FinishedAtUTC
+1,"Print daily reports",6,none,,
+6,"Print weekly reports",8,1,,
+8,"Copy daily reports for archive",4,1,,
+2,"Print monthly reports",10,1,,
+3,"Shred old paper stacks",7,2,,
+7,"Print annual reports",9,6:3,,
+4,"Copy monthly reports for archive",10,3,,
+5,"Print reports for shareholders",8,4:7:8,,

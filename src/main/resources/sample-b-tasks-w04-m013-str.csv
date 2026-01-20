@@ -1,0 +1,9 @@
+TaskId,Name,Duration,DependenciesTaskIdList,StartedAtUTC,FinishedAtUTC
+Alpha101,"T101",6,none,,
+Beta102,"T102",4,none,,
+Gamma103,"T103",3,Alpha101,,
+Delta104,"T104",4,Beta102,,
+Epsilon105,"T105",3,Beta102,,
+Zeta106,"T106",10,none,,
+Eta107,"T107",3,Epsilon105:Zeta106,,
+Theta108,"T108",2,Gamma103:Delta104,,
