@@ -21,7 +21,7 @@ public class Main implements Runnable {
 	private boolean doPrintHelp;
 
 	@SuppressWarnings("unused")
-	@CommandLine.Option(names = {"-o", "--output"})
+	@CommandLine.Option(names = {"--output-html"})
 	private @Nullable String outputHtmlFilename;
 
 	@SuppressWarnings("unused")

@@ -44,43 +44,43 @@ FN_G_OUTPUT_HTML="output-sample-g.html"
 # ------------------------------------------------------------
 #"${LVAR_GRADLE_EXE}" :run --args="'${FN_A_CONFIG}'" || exit 1
 
-#"${LVAR_GRADLE_EXE}" :run --args="-o='${FN_A_OUTPUT_HTML}' '${FN_A_CONFIG}'" || exit 1
+#"${LVAR_GRADLE_EXE}" :run --args="--output-html '${FN_A_OUTPUT_HTML}' '${FN_A_CONFIG}'" || exit 1
 
 # ------------------------------------------------------------
 # Sample B - NUM
 # ------------------------------------------------------------
 #"${LVAR_GRADLE_EXE}" :run --args="'${FN_B_NUM_CONFIG}'" || exit 1
 
-#"${LVAR_GRADLE_EXE}" :run --args="-o='${FN_B_NUM_OUTPUT_HTML}' '${FN_B_NUM_CONFIG}'" || exit 1
+#"${LVAR_GRADLE_EXE}" :run --args="--output-html '${FN_B_NUM_OUTPUT_HTML}' '${FN_B_NUM_CONFIG}'" || exit 1
 
 # ------------------------------------------------------------
 # Sample B - STR
 # ------------------------------------------------------------
 #"${LVAR_GRADLE_EXE}" :run --args="'${FN_B_STR_CONFIG}'" || exit 1
 
-#"${LVAR_GRADLE_EXE}" :run --args="-o='${FN_B_STR_OUTPUT_HTML}' '${FN_B_STR_CONFIG}'" || exit 1
+#"${LVAR_GRADLE_EXE}" :run --args="--output-html '${FN_B_STR_OUTPUT_HTML}' '${FN_B_STR_CONFIG}'" || exit 1
 
 # ------------------------------------------------------------
 # Sample C
 # ------------------------------------------------------------
-#"${LVAR_GRADLE_EXE}" :run --args="-o='${FN_C_OUTPUT_HTML}' '${FN_C_CONFIG}'" || exit 1
+#"${LVAR_GRADLE_EXE}" :run --args="--output-html '${FN_C_OUTPUT_HTML}' '${FN_C_CONFIG}'" || exit 1
 
 # ------------------------------------------------------------
 # Sample D
 # ------------------------------------------------------------
-#"${LVAR_GRADLE_EXE}" :run --args="-o='${FN_D_OUTPUT_HTML}' '${FN_D_CONFIG}'" || exit 1
+#"${LVAR_GRADLE_EXE}" :run --args="--output-html '${FN_D_OUTPUT_HTML}' '${FN_D_CONFIG}'" || exit 1
 
 # ------------------------------------------------------------
 # Sample E
 # ------------------------------------------------------------
-#"${LVAR_GRADLE_EXE}" :run --args="-o='${FN_E_OUTPUT_HTML}' '${FN_E_CONFIG}'" || exit 1
+#"${LVAR_GRADLE_EXE}" :run --args="--output-html '${FN_E_OUTPUT_HTML}' '${FN_E_CONFIG}'" || exit 1
 
 # ------------------------------------------------------------
 # Sample F
 # ------------------------------------------------------------
-#"${LVAR_GRADLE_EXE}" :run --args="-o='${FN_F_OUTPUT_HTML}' '${FN_F_CONFIG}'" || exit 1
+#"${LVAR_GRADLE_EXE}" :run --args="--output-html '${FN_F_OUTPUT_HTML}' '${FN_F_CONFIG}'" || exit 1
 
 # ------------------------------------------------------------
 # Sample G
 # ------------------------------------------------------------
-"${LVAR_GRADLE_EXE}" :run --args="-o='${FN_G_OUTPUT_HTML}' '${FN_G_CONFIG}'" || exit 1
+"${LVAR_GRADLE_EXE}" :run --args="--output-html '${FN_G_OUTPUT_HTML}' '${FN_G_CONFIG}'" || exit 1
