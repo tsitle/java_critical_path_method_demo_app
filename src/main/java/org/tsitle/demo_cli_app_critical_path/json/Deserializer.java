@@ -86,11 +86,15 @@ public final class Deserializer {
 			GsonBuilder gsonBldr = new GsonBuilder();
 			gsonBldr.registerTypeAdapter(AppConfig.Holiday.class, new HolidayDeserializer());
 			Reader reader = new InputStreamReader(stream);
-			return gsonBldr.create().fromJson(reader, AppConfig.class);
+			AppConfig appConfig = gsonBldr.create().fromJson(reader, AppConfig.class);
+			appConfig.validate();
+			return appConfig;
 		} catch (JsonSyntaxException e) {
-			throw new InvalidInputDataException(errorMsgPrefix + "could not parse JSON: " + e.getMessage());
+			throw new InvalidInputDataException(errorMsgPrefix + "syntax error in JSON: " + e.getMessage());
 		} catch (JsonIOException e) {
 			throw new IOException(errorMsgPrefix + "error while parsing JSON: " + e.getMessage());
+		} catch (JsonParseException e) {
+			throw new InvalidInputDataException(errorMsgPrefix + "could not parse JSON: " + e.getMessage());
 		}
 	}
 }
