@@ -235,6 +235,7 @@ public final class CpmResultsToHtml {
 				0,
 				0,
 				null,
+				null,
 				new HashSet<>(),
 				new HashSet<>(),
 				false,
@@ -318,24 +319,20 @@ public final class CpmResultsToHtml {
 		String durationStr = "-";
 		String timeStartedStr = "-";
 		String timeFinishedStr = "-";
-		if (! isEmptyEntry && ppTask.srTask().idOfRunitThatFinishedTask() != null) {
-			Optional<CpmSubResultRgroup> optRgroup = cpmResult.resultsRgroups().stream()
+		if (! isEmptyEntry && ppTask.srTask().idOfRgroupThatFinishedTask() != null &&
+				ppTask.srTask().idOfRunitThatFinishedTask() != null) {
+			CpmSubResultRgroup rgroupObj = cpmResult.resultsRgroups().stream()
 					.filter(x ->
-							x.resultsRunits().stream()
-									.anyMatch(y ->
-											y.id() == ppTask.srTask().idOfRunitThatFinishedTask()
-										)
+							x.id() == ppTask.srTask().idOfRgroupThatFinishedTask()
 						)
-					.findFirst();
-			if (optRgroup.isEmpty()) {
-				throw new IllegalStateException("Could not find resource group for task id=" + ppTask.id());
-			}
-			CpmSubResultRunit runitObj = optRgroup.get().resultsRunits().stream()
+					.findFirst()
+					.orElseThrow(() -> new IllegalStateException("Could not find resource group for task id=" + ppTask.id()));
+			CpmSubResultRunit runitObj = rgroupObj.resultsRunits().stream()
 					.filter(x -> x.id() == ppTask.srTask().idOfRunitThatFinishedTask())
 					.findFirst()
 					.orElseThrow(() -> new IllegalStateException("Could not find resource unit for task id=" + ppTask.id()));
 			runitStr = runitObj.name() + " (ID " + getExternalIdForOutput(runitObj.externalId()) + ")";
-			rgroupStr = optRgroup.get().name() + " (ID " + getExternalIdForOutput(optRgroup.get().externalId()) + ")";
+			rgroupStr = rgroupObj.name() + " (ID " + getExternalIdForOutput(rgroupObj.externalId()) + ")";
 
 			final String timeUnitLabel = getTimeUnitLabel();
 			durationStr = ppTask.durationOrg() + timeUnitLabel +
@@ -402,7 +399,7 @@ public final class CpmResultsToHtml {
 		if (cpmResult.resultsRgroups().isEmpty()) {
 			writeStatisticsSubRgEntryRgroup(createEmptySrRgroup(), true);
 		}
-		for (CpmSubResultRgroup srRgroup : cpmResult.resultsRgroups()) {
+		for (CpmSubResultRgroup srRgroup : cpmResult.resultsRgroups().stream().sorted(Comparator.comparing(CpmSubResultRgroup::name)).toList()) {
 			writeStatisticsSubRgEntryRgroup(srRgroup, false);
 		}
 		writeln(3, "</div>");
@@ -411,12 +408,11 @@ public final class CpmResultsToHtml {
 		writeln(3, "<div id=\"" + CSS_ID_SUBSECT_STATISTICS_SUB_RU + "\" class=\"" + CSS_CLASS_TABLE + "\">");
 		writeStatisticsSubRuEntryHeader();
 		if (cpmResult.resultsRgroups().isEmpty()) {
-			writeStatisticsSubRuEntryRunit(createEmptySrRgroup(), createEmptySrRunit(), true);
+			writeStatisticsSubRuEntryRunit(createEmptySrRunit(), true);
 		}
-		for (CpmSubResultRgroup srRgroup : cpmResult.resultsRgroups()) {
-			for (CpmSubResultRunit srRunit : srRgroup.resultsRunits()) {
-				writeStatisticsSubRuEntryRunit(srRgroup, srRunit, false);
-			}
+		Set<CpmSubResultRunit> runitsForOutput = getAllRunitsForOutput();
+		for (CpmSubResultRunit srRunit : runitsForOutput.stream().sorted(Comparator.comparing(CpmSubResultRunit::name)).toList()) {
+			writeStatisticsSubRuEntryRunit(srRunit, false);
 		}
 		writeln(3, "</div>");
 
@@ -439,10 +435,43 @@ public final class CpmResultsToHtml {
 		return String.format("%.0f%% (%d%s / %d%s)", percentDbl, value, unit, total, unit);
 	}
 
-	private static long getTasksCompletedCountForRgroup(CpmSubResultRgroup srRgroup) {
-		return srRgroup.resultsRunits().stream()
-				.mapToLong(x -> x.tasksCompleted().size())
-				.sum();
+	private @NonNull Set<CpmSubResultRunit> getAllRunitsForOutput() {
+		Set<CpmSubResultRunit> resSet = new LinkedHashSet<>();
+		for (CpmSubResultRgroup srRgroup : cpmResult.resultsRgroups()) {
+			for (CpmSubResultRunit srRunit : srRgroup.resultsRunits()) {
+				if (resSet.contains(srRunit)) {
+					continue;
+				}
+				resSet.add(srRunit);
+			}
+		}
+		return resSet;
+	}
+
+	private @NonNull Set<CpmSubResultRgroup> getAssociatedRgroupsForRunit(@NonNull CpmSubResultRunit srRunit) {
+		Set<CpmSubResultRgroup> resSet = new LinkedHashSet<>();
+		for (CpmSubResultRgroup tmpSrRgroup : cpmResult.resultsRgroups()) {
+			for (CpmSubResultRunit tmpSrRunit : tmpSrRgroup.resultsRunits()) {
+				if (tmpSrRunit.id() != srRunit.id()) {
+					continue;
+				}
+				if (resSet.contains(tmpSrRgroup)) {
+					continue;
+				}
+				resSet.add(tmpSrRgroup);
+				break;
+			}
+		}
+		return resSet;
+	}
+
+	private long getTasksCompletedCountForRgroup(CpmSubResultRgroup srRgroup) {
+		return cpmResult.resultsTasks().stream()
+				.filter(x ->
+						x.idOfRgroupThatFinishedTask() != null &&
+						x.idOfRgroupThatFinishedTask() == srRgroup.id()
+					)
+				.count();
 	}
 
 	private void writeStatisticsSubRgEntryRgroup(CpmSubResultRgroup srRgroup, boolean isEmptyEntry) throws IOException {
@@ -488,7 +517,7 @@ public final class CpmResultsToHtml {
 			);
 	}
 
-	private void writeStatisticsSubRuEntryRunit(CpmSubResultRgroup srRgroup, CpmSubResultRunit srRunit, boolean isEmptyEntry)
+	private void writeStatisticsSubRuEntryRunit(CpmSubResultRunit srRunit, boolean isEmptyEntry)
 			throws IOException {
 		String timeIdledStr = "-";
 		String timeBusyStr = "-";
@@ -499,7 +528,8 @@ public final class CpmResultsToHtml {
 			timeBusyStr = getHtmlForPercentage(srRunit.timeBusy(), cpmResult.timePassed(), getTimeUnitLabel());
 
 			long associatedTasksRuLong = srRunit.tasksCompleted().size();
-			long associatedTasksRgLong = getTasksCompletedCountForRgroup(srRgroup);
+			Set<CpmSubResultRgroup> tmpRgroups = getAssociatedRgroupsForRunit(srRunit);
+			long associatedTasksRgLong = tmpRgroups.stream().mapToLong(this::getTasksCompletedCountForRgroup).sum();
 			associatedTasksStr = getHtmlForPercentage(associatedTasksRuLong, associatedTasksRgLong, "");
 		}
 
