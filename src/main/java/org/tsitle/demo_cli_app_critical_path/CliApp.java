@@ -122,31 +122,31 @@ public final class CliApp {
 		defaultOutput("  Tasks:");
 		for (CpmSubResultTask tempResultsTask : cpmResult.resultsTasks()) {
 			@SuppressWarnings("StringBufferReplaceableByString") StringBuilder sb = new StringBuilder();
-			sb.append(CLASS_NAME).append(":     - Task id=").append(tempResultsTask.id());
+			sb.append("    - Task id=").append(tempResultsTask.id());
 			sb.append(", extId=").append(tempResultsTask.externalId());
 			sb.append(", started=").append(tempResultsTask.timeStarted()).append(timeUnitLabel)
 					.append(", finished=").append(tempResultsTask.timeFinished()).append(timeUnitLabel)
 					.append(", runitId=").append(tempResultsTask.idOfRunitThatFinishedTask());
-			System.out.println(sb);
+			defaultOutput(sb.toString());
 		}
 
 		defaultOutput("  Resource Groups:");
 		for (CpmSubResultRgroup tempResultsRgroup : cpmResult.resultsRgroups()) {
 			@SuppressWarnings("StringBufferReplaceableByString") StringBuilder sb = new StringBuilder();
-			sb.append(CLASS_NAME).append(":     - Resource Group id=").append(tempResultsRgroup.id());
+			sb.append("    - Resource Group id=").append(tempResultsRgroup.id());
 			sb.append(", extId=").append(tempResultsRgroup.externalId())
 					.append(", timeIdled=").append(tempResultsRgroup.timeIdled()).append(timeUnitLabel)
 					.append(", timeBusy=").append(tempResultsRgroup.timeBusy()).append(timeUnitLabel)
 					.append(", maxRunitsUsed=").append(tempResultsRgroup.maxRunitsUsed());
-			System.out.println(sb);
+			defaultOutput(sb.toString());
 			for (CpmSubResultRunit tempResultsRunit : tempResultsRgroup.resultsRunits()) {
 				@SuppressWarnings("StringBufferReplaceableByString") StringBuilder sb2 = new StringBuilder();
-				sb2.append(CLASS_NAME).append(":       - Resource Unit id=").append(tempResultsRunit.id());
+				sb2.append("      - Resource Unit id=").append(tempResultsRunit.id());
 				sb2.append(", extId=").append(tempResultsRunit.externalId())
 						.append(", timeIdled=").append(tempResultsRunit.timeIdled()).append(timeUnitLabel)
 						.append(", timeBusy=").append(tempResultsRunit.timeBusy()).append(timeUnitLabel)
 						.append(", tasksCompleted=").append(tempResultsRunit.tasksCompleted());
-				System.out.println(sb2);
+				defaultOutput(sb2.toString());
 			}
 		}
 
