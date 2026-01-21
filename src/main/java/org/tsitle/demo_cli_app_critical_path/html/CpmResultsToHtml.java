@@ -1,4 +1,4 @@
-package org.tsitle.demo_cli_app_critical_path;
+package org.tsitle.demo_cli_app_critical_path.html;
 
 import com.google.common.html.HtmlEscapers;
 import io.github.tsitle.criticalpath.cpmresults.*;
@@ -19,82 +19,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public final class CpmResultsToHtml {
-	private static final String CSS_ID_SECT_GANTT_CHART = "section-gantt-chart";
-	private static final String CSS_ID_GANTT_CHART_JS = "gantt-chart-js";
-	private static final String CSS_ID_SECT_OVERVIEW_TASKS = "section-overview-tasks";
-	private static final String CSS_ID_SECT_STATISTICS_MAIN = "section-statistics-main";
-	private static final String CSS_ID_SUBSECT_STATISTICS_SUB_RG = "statistics-rg";
-	private static final String CSS_ID_SUBSECT_STATISTICS_SUB_RU = "statistics-ru";
-	private static final String CSS_ID_SECT_INPUT_ARGS = "section-input-args";
-	private static final String CSS_ID_SECT_GENERATION_TIME = "section-generation-time";
-
-	private static final String CSS_CLASS_TABLE = "cpm-table";
-	private static final String CSS_CLASS_TABLE_HEAD_ROW = "cpm-table-head-row";
-	private static final String CSS_CLASS_TABLE_BODY_ROW = "cpm-table-body-row";
-	private static final String CSS_CLASS_CELL = "cpm-table-row-cell";
-
-	private static final String CSS_ROW_BG_COLOR_ODD = "#ccc";
-	private static final String CSS_ROW_BG_COLOR_EVEN = "#ddd";
-
-	private static final String CSS_TABLE_BG_COLOR = "#d4e5ff";
-
-	private static final List<String> COLUMN_HEADERS_OVERVIEW_TASKS = List.of(
-			"ID",
-			"Name",
-			"Duration",
-			"Time Started",
-			"Time Finished",
-			"Finished By",
-			"Resource Group"
-		);
-	private static final List<String> FIELD_IDS_FOR_CSSCLASS_OVERVIEW_TASKS = List.of(
-			"id",
-			"name",
-			"duration",
-			"timeStarted",
-			"timeFinished",
-			"finishedByResourceUnit",
-			"resourceGroup"
-		);
-
-	private static final List<String> COLUMN_HEADERS_STATS_RG = List.of(
-			"ID",
-			"Name",
-			"Time Idled",
-			"Time Busy",
-			"Associated Tasks",
-			"Max. Resource Units Used in Parallel"
-		);
-	private static final List<String> FIELD_IDS_FOR_CSSCLASS_STATS_RG = List.of(
-			"id",
-			"name",
-			"timeIdled",
-			"timeBusy",
-			"associatedTasks",
-			"runitsUsed"
-		);
-
-	private static final List<String> COLUMN_HEADERS_STATS_RU = List.of(
-			"ID",
-			"Name",
-			"Time Idled",
-			"Time Busy",
-			"Associated Tasks"
-		);
-	private static final List<String> FIELD_IDS_FOR_CSSCLASS_STATS_RU = List.of(
-			"id",
-			"name",
-			"timeIdled",
-			"timeBusy",
-			"associatedTasks"
-		);
-
-	private static final String TEXT_PAGE_TITLE = "Project Planning Results";
-	private static final String TEXT_PAGE_HEADLINE = "Results Of Project Planning Using Critical Path Method";
-	private static final String TEXT_NO_TASKS_TO_DISPLAY = "No Tasks to display";
-	private static final String TEXT_NO_RUNITS_TO_DISPLAY = "No Resource Units to display";
-	private static final String TEXT_NO_RGROUPS_TO_DISPLAY = "No Resource Groups to display";
-
 	private final @NonNull AppConfig appConfig;
 	private final @NonNull CpmResult cpmResult;
 	private final List<@NonNull CpmPostProcessedTask> postProcessedTasks;
@@ -156,13 +80,13 @@ public final class CpmResultsToHtml {
 		writeln(0, "<!DOCTYPE html>");
 		writeln(0, "<html lang=\"en\">");
 		writeln(0, "<head>");
-		writeln(1, "<title>" + TEXT_PAGE_TITLE + "</title>");
+		writeln(1, "<title>" + Constants.TEXT_PAGE_TITLE + "</title>");
 		writeln(1, "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">");
 		writeHeadStyles();
 		writeln(0, "</head>");
 		writeln(0, "<body>");
 
-		writeHeadline(1, "h1", TEXT_PAGE_HEADLINE);
+		writeHeadline(1, "h1", Constants.TEXT_PAGE_HEADLINE);
 
 		//
 		writeSectionGanttChart();
@@ -206,17 +130,17 @@ public final class CpmResultsToHtml {
 
 		writeln(2, "section { max-width:100%;width:1280px;margin-bottom:15px;margin-bottom:15px; }");
 
-		writeln(2, "." + CSS_CLASS_TABLE + " { display:table;background-color:" + CSS_TABLE_BG_COLOR + "; }");
-		writeln(2, "." + CSS_CLASS_TABLE_HEAD_ROW + ", ." + CSS_CLASS_TABLE_BODY_ROW + " { display:table-row; }");
-		writeln(2, "." + CSS_CLASS_TABLE_HEAD_ROW + " span { font-weight:bold; }");
-		writeln(2, "." + CSS_CLASS_TABLE_BODY_ROW + ":nth-child(2n+1) { background-color:" + CSS_ROW_BG_COLOR_ODD + "; }");
-		writeln(2, "." + CSS_CLASS_TABLE_BODY_ROW + ":nth-child(2n+2) { background-color:" + CSS_ROW_BG_COLOR_EVEN + "; }");
-		writeln(2, "." + CSS_CLASS_CELL + " { display:table-cell;padding:3px 5px;border-left:1px solid black;" +
+		writeln(2, "." + Constants.CSS_CLASS_TABLE + " { display:table;background-color:" + Constants.CSS_TABLE_BG_COLOR + "; }");
+		writeln(2, "." + Constants.CSS_CLASS_TABLE_HEAD_ROW + ", ." + Constants.CSS_CLASS_TABLE_BODY_ROW + " { display:table-row; }");
+		writeln(2, "." + Constants.CSS_CLASS_TABLE_HEAD_ROW + " span { font-weight:bold; }");
+		writeln(2, "." + Constants.CSS_CLASS_TABLE_BODY_ROW + ":nth-child(2n+1) { background-color:" + Constants.CSS_ROW_BG_COLOR_ODD + "; }");
+		writeln(2, "." + Constants.CSS_CLASS_TABLE_BODY_ROW + ":nth-child(2n+2) { background-color:" + Constants.CSS_ROW_BG_COLOR_EVEN + "; }");
+		writeln(2, "." + Constants.CSS_CLASS_CELL + " { display:table-cell;padding:3px 5px;border-left:1px solid black;" +
 				CSS_OVERFLOW_HIDDEN_WS_NOWRAP + ";min-width:15px;max-width:250px;text-overflow:ellipsis; }");
-		writeln(2, "." + CSS_CLASS_CELL + ":nth-child(1) { border-left:0px solid black; }");
+		writeln(2, "." + Constants.CSS_CLASS_CELL + ":nth-child(1) { border-left:0px solid black; }");
 
-		writeln(2, "#" + CSS_ID_GANTT_CHART_JS + " { }");
-		writeln(2, "#" + CSS_ID_SECT_GENERATION_TIME + " { border-top:1px solid black; }");
+		writeln(2, "#" + Constants.CSS_ID_GANTT_CHART_JS + " { }");
+		writeln(2, "#" + Constants.CSS_ID_SECT_GENERATION_TIME + " { border-top:1px solid black; }");
 
 		writeln(1, "</style>");
 	}
@@ -231,7 +155,7 @@ public final class CpmResultsToHtml {
 		CpmSubResultTask srTask = new CpmSubResultTask(
 				0,
 				"-",
-				TEXT_NO_TASKS_TO_DISPLAY,
+				Constants.TEXT_NO_TASKS_TO_DISPLAY,
 				0,
 				0,
 				null,
@@ -249,7 +173,7 @@ public final class CpmResultsToHtml {
 		return new CpmSubResultRgroup(
 				0,
 				"-",
-				TEXT_NO_RGROUPS_TO_DISPLAY,
+				Constants.TEXT_NO_RGROUPS_TO_DISPLAY,
 				0L,
 				0L,
 				0,
@@ -261,7 +185,7 @@ public final class CpmResultsToHtml {
 		return new CpmSubResultRunit(
 				0,
 				"-",
-				TEXT_NO_RUNITS_TO_DISPLAY,
+				Constants.TEXT_NO_RUNITS_TO_DISPLAY,
 				0L,
 				0L,
 				new HashSet<>()
@@ -271,13 +195,13 @@ public final class CpmResultsToHtml {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	private void writeSectionGanttChart() throws IOException {
-		writeln(1, "<section id=\"" + CSS_ID_SECT_GANTT_CHART + "\">");
+		writeln(1, "<section id=\"" + Constants.CSS_ID_SECT_GANTT_CHART + "\">");
 		writeHeadline(2, "h2", "Gantt Chart For Optimum Order Of Task Completion");
 
 		if (cpmResult.resultsTasks().isEmpty()) {
-			writeln(2, "<p>" + TEXT_NO_TASKS_TO_DISPLAY + "</p>");
+			writeln(2, "<p>" + Constants.TEXT_NO_TASKS_TO_DISPLAY + "</p>");
 		} else {
-			writeln(2, "<div id=\"" + CSS_ID_GANTT_CHART_JS + "\"></div>");
+			writeln(2, "<div id=\"" + Constants.CSS_ID_GANTT_CHART_JS + "\"></div>");
 		}
 
 		writeln(1, "</section>");
@@ -286,9 +210,9 @@ public final class CpmResultsToHtml {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	private void writeSectionOverviewTasks() throws IOException {
-		writeln(1, "<section id=\"" + CSS_ID_SECT_OVERVIEW_TASKS + "\">");
+		writeln(1, "<section id=\"" + Constants.CSS_ID_SECT_OVERVIEW_TASKS + "\">");
 		writeHeadline(2, "h2", "Overview Of Tasks In Execution Order");
-		writeln(2, "<div class=\"" + CSS_CLASS_TABLE + "\">");
+		writeln(2, "<div class=\"" + Constants.CSS_CLASS_TABLE + "\">");
 
 		writeOverviewTasksEntryHeader();
 
@@ -306,10 +230,10 @@ public final class CpmResultsToHtml {
 	private void writeOverviewTasksEntryHeader() throws IOException {
 		writeTableRow(
 				3,
-				CSS_CLASS_TABLE_HEAD_ROW + " overview-tasks-head",
+				Constants.CSS_CLASS_TABLE_HEAD_ROW + " overview-tasks-head",
 				"overview-tasks-head-content",
-				FIELD_IDS_FOR_CSSCLASS_OVERVIEW_TASKS,
-				COLUMN_HEADERS_OVERVIEW_TASKS
+				Constants.FIELD_IDS_FOR_CSSCLASS_OVERVIEW_TASKS,
+				Constants.COLUMN_HEADERS_OVERVIEW_TASKS
 			);
 	}
 
@@ -355,9 +279,9 @@ public final class CpmResultsToHtml {
 			);
 		writeTableRow(
 				3,
-				CSS_CLASS_TABLE_BODY_ROW + " overview-tasks-entry",
+				Constants.CSS_CLASS_TABLE_BODY_ROW + " overview-tasks-entry",
 				"overview-tasks-entry-content",
-				FIELD_IDS_FOR_CSSCLASS_OVERVIEW_TASKS,
+				Constants.FIELD_IDS_FOR_CSSCLASS_OVERVIEW_TASKS,
 				cellValues
 			);
 	}
@@ -365,7 +289,7 @@ public final class CpmResultsToHtml {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	private void writeSectionStatistics() throws IOException {
-		writeln(1, "<section id=\"" + CSS_ID_SECT_STATISTICS_MAIN + "\">");
+		writeln(1, "<section id=\"" + Constants.CSS_ID_SECT_STATISTICS_MAIN + "\">");
 		writeHeadline(2, "h2", "Statistics");
 		writeln(2, "<div>");
 
@@ -394,7 +318,7 @@ public final class CpmResultsToHtml {
 		writeln(3, "</ul>");
 
 		writeHeadline(3, "h3", "Per Resource Group");
-		writeln(3, "<div id=\"" + CSS_ID_SUBSECT_STATISTICS_SUB_RG + "\" class=\"" + CSS_CLASS_TABLE + "\">");
+		writeln(3, "<div id=\"" + Constants.CSS_ID_SUBSECT_STATISTICS_SUB_RG + "\" class=\"" + Constants.CSS_CLASS_TABLE + "\">");
 		writeStatisticsSubRgEntryHeader();
 		if (cpmResult.resultsRgroups().isEmpty()) {
 			writeStatisticsSubRgEntryRgroup(createEmptySrRgroup(), true);
@@ -405,7 +329,7 @@ public final class CpmResultsToHtml {
 		writeln(3, "</div>");
 
 		writeHeadline(3, "h3", "Per Resource Unit");
-		writeln(3, "<div id=\"" + CSS_ID_SUBSECT_STATISTICS_SUB_RU + "\" class=\"" + CSS_CLASS_TABLE + "\">");
+		writeln(3, "<div id=\"" + Constants.CSS_ID_SUBSECT_STATISTICS_SUB_RU + "\" class=\"" + Constants.CSS_CLASS_TABLE + "\">");
 		writeStatisticsSubRuEntryHeader();
 		if (cpmResult.resultsRgroups().isEmpty()) {
 			writeStatisticsSubRuEntryRunit(createEmptySrRunit(), true);
@@ -423,10 +347,10 @@ public final class CpmResultsToHtml {
 	private void writeStatisticsSubRgEntryHeader() throws IOException {
 		writeTableRow(
 				4,
-				CSS_CLASS_TABLE_HEAD_ROW + " statistics-rg-head",
+				Constants.CSS_CLASS_TABLE_HEAD_ROW + " statistics-rg-head",
 				"statistics-rg-head-content",
-				FIELD_IDS_FOR_CSSCLASS_STATS_RG,
-				COLUMN_HEADERS_STATS_RG
+				Constants.FIELD_IDS_FOR_CSSCLASS_STATS_RG,
+				Constants.COLUMN_HEADERS_STATS_RG
 			);
 	}
 
@@ -500,9 +424,9 @@ public final class CpmResultsToHtml {
 			);
 		writeTableRow(
 				4,
-				CSS_CLASS_TABLE_BODY_ROW + " statistics-rg-entry",
+				Constants.CSS_CLASS_TABLE_BODY_ROW + " statistics-rg-entry",
 				"statistics-rg-entry-content",
-				FIELD_IDS_FOR_CSSCLASS_STATS_RG,
+				Constants.FIELD_IDS_FOR_CSSCLASS_STATS_RG,
 				cellValues
 			);
 	}
@@ -510,10 +434,10 @@ public final class CpmResultsToHtml {
 	private void writeStatisticsSubRuEntryHeader() throws IOException {
 		writeTableRow(
 				4,
-				CSS_CLASS_TABLE_HEAD_ROW + " statistics-ru-head",
+				Constants.CSS_CLASS_TABLE_HEAD_ROW + " statistics-ru-head",
 				"statistics-ru-head-content",
-				FIELD_IDS_FOR_CSSCLASS_STATS_RU,
-				COLUMN_HEADERS_STATS_RU
+				Constants.FIELD_IDS_FOR_CSSCLASS_STATS_RU,
+				Constants.COLUMN_HEADERS_STATS_RU
 			);
 	}
 
@@ -542,9 +466,9 @@ public final class CpmResultsToHtml {
 			);
 		writeTableRow(
 				4,
-				CSS_CLASS_TABLE_BODY_ROW + " statistics-ru-entry",
+				Constants.CSS_CLASS_TABLE_BODY_ROW + " statistics-ru-entry",
 				"statistics-ru-entry-content",
-				FIELD_IDS_FOR_CSSCLASS_STATS_RU,
+				Constants.FIELD_IDS_FOR_CSSCLASS_STATS_RU,
 				cellValues
 			);
 	}
@@ -552,7 +476,7 @@ public final class CpmResultsToHtml {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	private void writeSectionInputArgs() throws IOException {
-		writeln(1, "<section id=\"" + CSS_ID_SECT_INPUT_ARGS + "\">");
+		writeln(1, "<section id=\"" + Constants.CSS_ID_SECT_INPUT_ARGS + "\">");
 		writeHeadline(2, "h2", "Input Arguments");
 		writeln(2, "<div>");
 
@@ -582,7 +506,7 @@ public final class CpmResultsToHtml {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	private void writeSectionGenerationTime() throws IOException {
-		writeln(1, "<section id=\"" + CSS_ID_SECT_GENERATION_TIME + "\">");
+		writeln(1, "<section id=\"" + Constants.CSS_ID_SECT_GENERATION_TIME + "\">");
 		writeln(2, "<div>");
 
 		writeln(3, "<p>Generated: " + escapeHtml(LocalDateTime.now().toString()) + "</p>");
@@ -636,7 +560,7 @@ public final class CpmResultsToHtml {
 			case DAYS -> viewMode = "Week";
 			default -> throw new IllegalStateException("Unexpected value: " + appConfig.timeUnit);
 		}
-		writeln(2, "new Gantt(\"#" + CSS_ID_GANTT_CHART_JS + "\", LOC_TASKS, " +
+		writeln(2, "new Gantt(\"#" + Constants.CSS_ID_GANTT_CHART_JS + "\", LOC_TASKS, " +
 				"{view_mode: '" + viewMode + "', view_mode_select: true, " +
 					"readonly_progress: true, readonly_dates: true, readonly: true, " +
 					"holidays: { 'var(--g-weekend-highlight-color)': 'weekend', '#e4d1d0': LOC_HOLIDAYS }" +
@@ -692,7 +616,7 @@ public final class CpmResultsToHtml {
 
 	private void writeTableCell(int level, String cssClassCells, String fieldId, String cellValue) throws IOException {
 		final String htmlCellValue = escapeHtml(cellValue);
-		writeln(level, "<div class=\"" + CSS_CLASS_CELL + " " + cssClassCells + " " + cssClassCells + "-" + fieldId + "\">" +
+		writeln(level, "<div class=\"" + Constants.CSS_CLASS_CELL + " " + cssClassCells + " " + cssClassCells + "-" + fieldId + "\">" +
 				"<span title=\"" + htmlCellValue + "\">" + htmlCellValue + "</span>" +
 				"</div>");
 	}

@@ -16,6 +16,7 @@ import io.github.tsitle.criticalpath.rawdata.RawDataForGraph;
 import io.github.tsitle.criticalpath.rawdata.containers.BaseRawData;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.tsitle.demo_cli_app_critical_path.html.CpmResultsToHtml;
 import org.tsitle.demo_cli_app_critical_path.json.AppConfig;
 
 import java.io.*;
