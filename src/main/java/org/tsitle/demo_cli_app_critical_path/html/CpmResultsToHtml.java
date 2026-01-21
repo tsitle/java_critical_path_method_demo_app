@@ -80,6 +80,7 @@ public final class CpmResultsToHtml {
 		writeln(0, "<!DOCTYPE html>");
 		writeln(0, "<html lang=\"en\">");
 		writeln(0, "<head>");
+		writeln(1, "<meta charset=\"utf-8\">");
 		writeln(1, "<title>" + Constants.TEXT_PAGE_TITLE + "</title>");
 		writeln(1, "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">");
 		writeHeadStyles();
