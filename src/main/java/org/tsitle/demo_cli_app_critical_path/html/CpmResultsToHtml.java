@@ -118,6 +118,14 @@ public final class CpmResultsToHtml {
 
 		writeln(1, "<style>");
 
+		writeln(2, "/* for Gantt Chart */");
+		writeln(2, ":root {");
+		writeln(3, "--g-progress-color:" + Constants.CSS_GANTT_CHART_JS_PROGRESS_COLOR + ";");
+		writeln(3, "--g-weekend-highlight-color:" + Constants.CSS_GANTT_CHART_JS_WEEKEND_COLOR + ";");
+		writeln(2, "}");
+		writeln(2, ".gantt-container .popup-wrapper { background:" + Constants.CSS_GANTT_CHART_JS_POPUP_BG_COLOR + "; }");
+
+		writeln(2, "/* for everything else */");
 		writeln(2, "body { padding-bottom:50px; }");
 
 		writeln(2, ".headline-wrapper { display:block; }");
@@ -563,7 +571,10 @@ public final class CpmResultsToHtml {
 		writeln(2, "new Gantt(\"#" + Constants.CSS_ID_GANTT_CHART_JS + "\", LOC_TASKS, " +
 				"{view_mode: '" + viewMode + "', view_mode_select: true, " +
 					"readonly_progress: true, readonly_dates: true, readonly: true, " +
-					"holidays: { 'var(--g-weekend-highlight-color)': 'weekend', '#e4d1d0': LOC_HOLIDAYS }" +
+					"holidays: { " +
+						"'var(--g-weekend-highlight-color)': 'weekend', " +
+						"'" + Constants.CSS_GANTT_CHART_JS_HOLIDAY_COLOR + "': LOC_HOLIDAYS " +
+					"}" +
 				"});");
 
 		writeln(1, "</script>");
