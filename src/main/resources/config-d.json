@@ -1,0 +1,50 @@
+{
+	"debugging": {
+		"debugMain": true,
+		"debugCpgInternals": false,
+		"debugCpgVerboseInternals": false,
+		"debugCpcInternals": true,
+		"debugCpcShowPath": false
+	},
+	"timeUnit": "DAYS",
+	"offDutyTimes": {
+		"workDays": [
+			"MONDAY",
+			"TUESDAY",
+			"WEDNESDAY",
+			"THURSDAY",
+			"FRIDAY"
+		],
+		"workHours": [
+			{
+				"hourStart": 8,
+				"hourEnd": 12
+			},
+			{
+				"hourStart": 13,
+				"hourEnd": 17
+			}
+		],
+		"holidays": [
+			"<YEAR>-01-01",
+			"<YEAR>-12-25",
+			"<YEAR>-12-26",
+			"<YEAR>-<MONTH>-<DAY+2>",
+			"<YEAR>-<MONTH+1>-<DAY+10>"
+		]
+	},
+	"inputData": {
+		"indicesType": "STR",
+		"filenameTasks": "rsc:sample-d-tasks-str.csv",
+		"useBasicInputData": false,
+		"inputDataBasic": {
+			"amountResourceUnits": 0
+		},
+		"inputDataAdvanced": {
+			"filenameRunits": "rsc:sample-d-runits-str.csv",
+			"filenameRgroups": "rsc:sample-d-rgroups-str.csv",
+			"filenameAssocRunitsWithRgroups": "rsc:sample-d-assoc_runits_w_rgroups-str.csv",
+			"filenameAssocRgroupsWithTasks": "rsc:sample-d-assoc_rgroups_w_tasks-str.csv"
+		}
+	}
+}

@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "org.tsitle.demo_cli_app_critical_path"
-version = "1.0-SNAPSHOT"
+version = "1.0"
 
 repositories {
 	mavenCentral()
@@ -17,6 +17,8 @@ dependencies {
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	//implementation("org.jspecify:jspecify:1.0.0")  // transitive dependency of io.github.tsitle.criticalpath
 	implementation("com.google.guava:guava:33.5.0-jre")  // for HTML escaping
+	implementation("com.google.code.gson:gson:2.13.2")  // for JSON deserialization
+	implementation("info.picocli:picocli:4.7.7")  // for CLI arguments parsing
 	implementation(":lib_critical_path_method:1.0")
 }
 

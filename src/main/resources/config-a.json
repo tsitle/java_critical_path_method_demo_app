@@ -1,0 +1,54 @@
+{
+	"debugging": {
+		"debugMain": true,
+		"debugCpgInternals": false,
+		"debugCpgVerboseInternals": false,
+		"debugCpcInternals": true,
+		"debugCpcShowPath": false
+	},
+	"timeUnit": "DAYS",
+	"offDutyTimes": {
+		"workDays": [
+			"MONDAY",
+			"TUESDAY",
+			"WEDNESDAY",
+			"THURSDAY",
+			"FRIDAY"
+		],
+		"workHours": [
+			{
+				"hourStart": 8,
+				"hourEnd": 12
+			},
+			{
+				"hourStart": 13,
+				"hourEnd": 17
+			}
+		],
+		"holidays": [
+			"2001-02-03",
+			"2002-<MONTH>-01",
+			"2003-04-<DAY>",
+			"<YEAR>-01-01",
+			"<YEAR>-12-25",
+			"<YEAR>-12-26",
+			"<YEAR>-<MONTH>-<DAY+2>",
+			"<YEAR>-<MONTH+1>-<DAY+10>",
+			"<YEAR-2>-<MONTH-1>-<DAY-3>"
+		]
+	},
+	"inputData": {
+		"indicesType": "NUM",
+		"filenameTasks": "src/main/resources/sample-a-tasks-w03-m065-num.csv",
+		"useBasicInputData": true,
+		"inputDataBasic": {
+			"amountResourceUnits": 3
+		},
+		"inputDataAdvanced": {
+			"filenameRunits": "",
+			"filenameRgroups": "",
+			"filenameAssocRunitsWithRgroups": "",
+			"filenameAssocRgroupsWithTasks": ""
+		}
+	}
+}

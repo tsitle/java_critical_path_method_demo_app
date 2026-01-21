@@ -6,6 +6,7 @@ import io.github.tsitle.criticalpath.ResultsPostProcessing;
 import io.github.tsitle.criticalpath.dateformatters.DateFormatters;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.tsitle.demo_cli_app_critical_path.json.AppConfig;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -94,7 +95,7 @@ public final class CpmResultsToHtml {
 	private static final String TEXT_NO_RUNITS_TO_DISPLAY = "No Resource Units to display";
 	private static final String TEXT_NO_RGROUPS_TO_DISPLAY = "No Resource Groups to display";
 
-	private final CliArgs.AllArgs cliArgsAll;
+	private final @NonNull AppConfig appConfig;
 	private final @NonNull CpmResult cpmResult;
 	private final List<@NonNull CpmPostProcessedTask> postProcessedTasks;
 	private final long projectTotalTimeSpent;
@@ -106,21 +107,21 @@ public final class CpmResultsToHtml {
 	private @Nullable OutputStream outputStream = null;
 
 	public CpmResultsToHtml(
-				CliArgs.AllArgs cliArgsAll,
+				@NonNull AppConfig appConfig,
 				@NonNull CpmResult cpmResult,
 				@NonNull LocalDateTime presentDateTime,
 				@NonNull String outputFilename
 			) {
-		this.cliArgsAll = cliArgsAll;
+		this.appConfig = appConfig;
 		this.cpmResult = cpmResult;
 		this.outputFilename = outputFilename;
 
 		//
 		final ResultsPostProcessing rppObj = new ResultsPostProcessing(
-				cliArgsAll.argsCommon().timeUnit(),
-				cliArgsAll.argsOffDutyTimes().workDays(),
-				cliArgsAll.argsOffDutyTimes().workHours(),
-				cliArgsAll.argsOffDutyTimes().holidays(),
+				appConfig.timeUnit,
+				appConfig.offDutyTimes.workDays(),
+				appConfig.offDutyTimes.workHours(),
+				appConfig.offDutyTimes.holidaysAsLocalDates(),
 				cpmResult,
 				presentDateTime
 			);
@@ -173,9 +174,7 @@ public final class CpmResultsToHtml {
 		writeSectionStatistics();
 
 		//
-		if (cliArgsAll != null) {
-			writeSectionInputArgs();
-		}
+		writeSectionInputArgs();
 
 		//
 		writeSectionGenerationTime();
@@ -342,7 +341,7 @@ public final class CpmResultsToHtml {
 			durationStr = ppTask.durationOrg() + timeUnitLabel +
 					" (+ " + ppTask.durationDelta() + timeUnitLabel + ")";
 
-			final DateTimeFormatter formatter = DateFormatters.getFormatterForTimeUnit(cliArgsAll.argsCommon().timeUnit());
+			final DateTimeFormatter formatter = DateFormatters.getFormatterForTimeUnit(appConfig.timeUnit);
 
 			timeStartedStr = ppTask.taskStartedAdjustedDateTime().format(formatter);
 			timeFinishedStr = ppTask.taskFinishedAdjustedDateTime().format(formatter);
@@ -373,7 +372,7 @@ public final class CpmResultsToHtml {
 		writeHeadline(2, "h2", "Statistics");
 		writeln(2, "<div>");
 
-		final String timeUnitStr = cliArgsAll.argsCommon().timeUnit().toString().toLowerCase();
+		final String timeUnitStr = appConfig.timeUnit.toString().toLowerCase();
 		writeln(3, "<ul>");
 		writeln(4, "<li><span>Minimum time required to complete all tasks: " +
 				projectTotalTimeSpent + " " + timeUnitStr + "</span><br />" +
@@ -529,7 +528,7 @@ public final class CpmResultsToHtml {
 
 		writeln(3, "<ul>");
 
-		for (Map.Entry<@NonNull String, @NonNull Map<@NonNull String, @NonNull String>> entry : cliArgsAll.asMap().entrySet()) {
+		for (Map.Entry<@NonNull String, @NonNull Map<@NonNull String, @NonNull String>> entry : appConfig.asMap().entrySet()) {
 			writeSectionInputArgsArgList(entry.getKey(), entry.getValue());
 		}
 
@@ -573,7 +572,7 @@ public final class CpmResultsToHtml {
 		writeln(1, "<script type=\"text/javascript\">");
 
 		writeln(2, "const LOC_HOLIDAYS = [");
-		for (LocalDate holiday : cliArgsAll.argsOffDutyTimes().holidays()) {
+		for (LocalDate holiday : appConfig.offDutyTimes.holidaysAsLocalDates()) {
 			writeln(3, "{");
 			writeln(4, "name: 'Holiday " + holiday.format(DateFormatters.onlyDate) + "',");
 			writeln(4, "date: '" + holiday.format(DateFormatters.onlyDate) + "'");
@@ -601,11 +600,11 @@ public final class CpmResultsToHtml {
 		 * Available view modes: Hour, Quarter Day, Half Day, Day, Week, Month, Year
 		 */
 		final String viewMode;
-		switch (cliArgsAll.argsCommon().timeUnit()) {
+		switch (appConfig.timeUnit) {
 			case MINUTES -> viewMode = "Hour";
 			case HOURS -> viewMode = "Quarter Day";
 			case DAYS -> viewMode = "Week";
-			default -> throw new IllegalStateException("Unexpected value: " + cliArgsAll.argsCommon().timeUnit());
+			default -> throw new IllegalStateException("Unexpected value: " + appConfig.timeUnit);
 		}
 		writeln(2, "new Gantt(\"#" + CSS_ID_GANTT_CHART_JS + "\", LOC_TASKS, " +
 				"{view_mode: '" + viewMode + "', view_mode_select: true, " +
@@ -619,7 +618,7 @@ public final class CpmResultsToHtml {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	private String getTimeUnitLabel() {
-		return cliArgsAll.argsCommon().timeUnit().getLabel();
+		return appConfig.timeUnit.getLabel();
 	}
 
 	private static String escapeHtml(@Nullable String str) {
