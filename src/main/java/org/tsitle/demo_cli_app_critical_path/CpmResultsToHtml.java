@@ -639,7 +639,7 @@ public final class CpmResultsToHtml {
 		writeln(2, "new Gantt(\"#" + CSS_ID_GANTT_CHART_JS + "\", LOC_TASKS, " +
 				"{view_mode: '" + viewMode + "', view_mode_select: true, " +
 					"readonly_progress: true, readonly_dates: true, readonly: true, " +
-					"holidays: { 'var(--g-weekend-highlight-color)': 'weekend', '#dedede': LOC_HOLIDAYS }" +
+					"holidays: { 'var(--g-weekend-highlight-color)': 'weekend', '#e4d1d0': LOC_HOLIDAYS }" +
 				"});");
 
 		writeln(1, "</script>");
