@@ -131,9 +131,11 @@ public class AppConfig {
 	public OffDutyTimes offDutyTimes;
 	public InputData inputData;
 
-	public @NonNull Map<@NonNull String, @NonNull Map<@NonNull String, @NonNull String>> asMap() {
+	public @NonNull Map<@NonNull String, @NonNull Map<@NonNull String, @NonNull String>> asMap(boolean includeDebugInfo) {
 		return new LinkedHashMap<>() {{
-				put("Debugging", debugging.asMap());
+				if (includeDebugInfo) {
+					put("Debugging", debugging.asMap());
+				}
 				put("Time Unit", new LinkedHashMap<>() {{ put("Unit", timeUnit.name()); }});
 				put("Off-Duty Times", offDutyTimes.asMap());
 				put("Input Data", inputData.asMap());

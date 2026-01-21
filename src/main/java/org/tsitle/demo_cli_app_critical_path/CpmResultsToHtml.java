@@ -528,7 +528,7 @@ public final class CpmResultsToHtml {
 
 		writeln(3, "<ul>");
 
-		for (Map.Entry<@NonNull String, @NonNull Map<@NonNull String, @NonNull String>> entry : appConfig.asMap().entrySet()) {
+		for (Map.Entry<@NonNull String, @NonNull Map<@NonNull String, @NonNull String>> entry : appConfig.asMap(false).entrySet()) {
 			writeSectionInputArgsArgList(entry.getKey(), entry.getValue());
 		}
 
