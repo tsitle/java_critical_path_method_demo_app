@@ -147,7 +147,6 @@ public final class CpmResultsToHtml {
 				CSS_OVERFLOW_HIDDEN_WS_NOWRAP + ";min-width:15px;max-width:250px;text-overflow:ellipsis; }");
 		writeln(2, "." + Constants.CSS_CLASS_CELL + ":nth-child(1) { border-left:0px solid black; }");
 
-		writeln(2, "#" + Constants.CSS_ID_GANTT_CHART_JS + " { }");
 		writeln(2, "#" + Constants.CSS_ID_SECT_GENERATION_TIME + " { border-top:1px solid black; }");
 
 		writeln(1, "</style>");
@@ -196,6 +195,7 @@ public final class CpmResultsToHtml {
 				Constants.TEXT_NO_RUNITS_TO_DISPLAY,
 				0L,
 				0L,
+				new HashSet<>(),
 				new HashSet<>()
 			);
 	}
@@ -342,7 +342,7 @@ public final class CpmResultsToHtml {
 		if (cpmResult.resultsRgroups().isEmpty()) {
 			writeStatisticsSubRuEntryRunit(createEmptySrRunit(), true);
 		}
-		Set<CpmSubResultRunit> runitsForOutput = getAllRunitsForOutput();
+		List<CpmSubResultRunit> runitsForOutput = cpmResult.resultsRunits();
 		for (CpmSubResultRunit srRunit : runitsForOutput.stream().sorted(Comparator.comparing(CpmSubResultRunit::name)).toList()) {
 			writeStatisticsSubRuEntryRunit(srRunit, false);
 		}
@@ -367,32 +367,14 @@ public final class CpmResultsToHtml {
 		return String.format("%.0f%% (%d%s / %d%s)", percentDbl, value, unit, total, unit);
 	}
 
-	private @NonNull Set<CpmSubResultRunit> getAllRunitsForOutput() {
-		Set<CpmSubResultRunit> resSet = new LinkedHashSet<>();
-		for (CpmSubResultRgroup srRgroup : cpmResult.resultsRgroups()) {
-			for (CpmSubResultRunit srRunit : srRgroup.resultsRunits()) {
-				if (resSet.contains(srRunit)) {
-					continue;
-				}
-				resSet.add(srRunit);
-			}
-		}
-		return resSet;
-	}
-
 	private @NonNull Set<CpmSubResultRgroup> getAssociatedRgroupsForRunit(@NonNull CpmSubResultRunit srRunit) {
 		Set<CpmSubResultRgroup> resSet = new LinkedHashSet<>();
-		for (CpmSubResultRgroup tmpSrRgroup : cpmResult.resultsRgroups()) {
-			for (CpmSubResultRunit tmpSrRunit : tmpSrRgroup.resultsRunits()) {
-				if (tmpSrRunit.id() != srRunit.id()) {
-					continue;
-				}
-				if (resSet.contains(tmpSrRgroup)) {
-					continue;
-				}
-				resSet.add(tmpSrRgroup);
-				break;
-			}
+		for (Long rgroupId : srRunit.associatedRgroupIds()) {
+			CpmSubResultRgroup tmpSrRgroup = cpmResult.resultsRgroups().stream()
+					.filter(x -> x.id() == rgroupId)
+					.findFirst()
+					.orElseThrow(() -> new IllegalStateException("Could not find resource group with id=" + rgroupId));
+			resSet.add(tmpSrRgroup);
 		}
 		return resSet;
 	}

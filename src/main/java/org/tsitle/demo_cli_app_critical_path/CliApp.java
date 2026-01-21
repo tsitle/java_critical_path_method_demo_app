@@ -71,9 +71,7 @@ public final class CliApp {
 
 		// compute CPM results
 		if (debugMainOrCpg) {
-			debugOutput(CLASS_NAME + ": Complete all Tasks with " +
-					inputRawDataForCompute.rgroups.size() + " Resource Groups and " +
-					inputRawDataForCompute.runits.size() + " Resource Units working in parallel:");
+			debugOutput(CLASS_NAME + ": Compute CPM results:");
 		}
 		final CpmResult cpmResult = computeCpmResult(criticalPathGraph);
 
