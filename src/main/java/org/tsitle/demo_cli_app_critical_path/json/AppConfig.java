@@ -2,7 +2,9 @@ package org.tsitle.demo_cli_app_critical_path.json;
 
 import io.github.tsitle.criticalpath.CpmHourInterval;
 import io.github.tsitle.criticalpath.CpmTimeUnit;
+import io.github.tsitle.criticalpath.exceptions.InvalidInputDataException;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -28,26 +30,68 @@ public class AppConfig {
 		}
 	}
 
-	public record Holiday(String templateStr, LocalDate date) { }
+	public record Holiday(@NonNull String templateStr, @NonNull LocalDate date) { }
 
 	public record OffDutyTimes(
-				Set<DayOfWeek> workDays,
-				Set<CpmHourInterval> workHours,
-				Set<Holiday> holidays
+				@NonNull Set<@NonNull DayOfWeek> workDays,
+				@NonNull Set<@NonNull CpmHourInterval> workHours,
+				@NonNull Set<@NonNull Holiday> holidays
 			) {
+		@SuppressWarnings("ConstantValue")
 		public @NonNull Set<@NonNull LocalDate> holidaysAsLocalDates() {
-			List<LocalDate> tmpList = holidays.stream().map(Holiday::date).toList();
 			Set<LocalDate> resSet = new TreeSet<>();
-			tmpList.stream().sorted().forEach(resSet::add);
+			if (holidays != null) {
+				List<LocalDate> tmpList = holidays.stream()
+						.filter(Objects::nonNull)
+						.map(Holiday::date)
+						.toList();
+				tmpList.stream().sorted().forEach(resSet::add);
+			}
 			return resSet;
 		}
 
+		@SuppressWarnings("ConstantValue")
 		public @NonNull Map<@NonNull String, @NonNull String> asMap() {
 			return new LinkedHashMap<>() {{
-					put("Work Days", workDays.toString());
-					put("Work Hours", workHours.toString());
-					put("Holidays", holidaysAsLocalDates().toString());
+					if (workDays != null) {
+						put("Work Days", workDays.toString());
+					}
+					if (workHours != null) {
+						put("Work Hours", workHours.toString());
+					}
+					if (holidays != null) {
+						put("Holidays", holidaysAsLocalDates().toString());
+					}
 				}};
+		}
+
+		@SuppressWarnings("ConstantValue")
+		public void validate() throws InvalidInputDataException {
+			final String prefix = "AppConfig.OffDutyTimes.";
+			if (workDays == null) {
+				throw new InvalidInputDataException(prefix + "workDays may not be null");
+			}
+			for (DayOfWeek dayOfWeek : workDays) {
+				if (dayOfWeek == null) {
+					throw new InvalidInputDataException(prefix + "workDays may not contain null elements");
+				}
+			}
+			if (workHours == null) {
+				throw new InvalidInputDataException(prefix + "workHours may not be null");
+			}
+			for (CpmHourInterval interval : workHours) {
+				if (interval == null) {
+					throw new InvalidInputDataException(prefix + "workHours may not contain null elements");
+				}
+			}
+			if (holidays == null) {
+				throw new InvalidInputDataException(prefix + "holidays may not be null");
+			}
+			for (Holiday holiday : holidays) {
+				if (holiday == null) {
+					throw new InvalidInputDataException(prefix + "holidays may not contain null elements");
+				}
+			}
 		}
 	}
 
@@ -61,41 +105,81 @@ public class AppConfig {
 					put("Amount Resource Units", String.valueOf(amountResourceUnits));
 				}};
 		}
+
+		public void validate(boolean useBasicInputData) throws InvalidInputDataException {
+			final String prefix = "AppConfig.InputData.InputDataBasic.";
+			if (useBasicInputData && amountResourceUnits < 1) {
+				throw new InvalidInputDataException(prefix + "amountResourceUnits must be >= 1");
+			}
+		}
 	}
 
 	public record InputDataAdvanced(
-				String filenameRunits,
-				String filenameRgroups,
-				String filenameAssocRunitsWithRgroups,
-				String filenameAssocRgroupsWithTasks
+				@NonNull String filenameRunits,
+				@NonNull String filenameRgroups,
+				@NonNull String filenameAssocRunitsWithRgroups,
+				@NonNull String filenameAssocRgroupsWithTasks
 			) {
+		@SuppressWarnings("ConstantValue")
 		public @NonNull Map<@NonNull String, @NonNull String> asMap() {
 			return new LinkedHashMap<>() {{
-					put("Filename Runits", "\"" + escapeQuotes(filenameRunits) + "\"");
-					put("Filename Rgroups", "\"" + escapeQuotes(filenameRgroups) + "\"");
-					put("Filename AssocRunitsWithRgroups", "\"" + escapeQuotes(filenameAssocRunitsWithRgroups) + "\"");
-					put("Filename AssocRgroupsWithTasks", "\"" + escapeQuotes(filenameAssocRgroupsWithTasks) + "\"");
+					if (filenameRunits != null) {
+						put("Filename Runits", "\"" + escapeQuotes(filenameRunits) + "\"");
+					}
+					if (filenameRgroups != null) {
+						put("Filename Rgroups", "\"" + escapeQuotes(filenameRgroups) + "\"");
+					}
+					if (filenameAssocRunitsWithRgroups != null) {
+						put("Filename AssocRunitsWithRgroups", "\"" + escapeQuotes(filenameAssocRunitsWithRgroups) + "\"");
+					}
+					if (filenameAssocRgroupsWithTasks != null) {
+						put("Filename AssocRgroupsWithTasks", "\"" + escapeQuotes(filenameAssocRgroupsWithTasks) + "\"");
+					}
 				}};
 		}
+
 		private static String escapeQuotes(String str) {
 			return str.replaceAll("\"", "\\\\\"");
+		}
+
+		private static void validateFn(boolean useBasicInputData, @Nullable String fn, String fieldName)
+				throws InvalidInputDataException {
+			final String prefix = "AppConfig.InputData.InputDataAdvanced.";
+			if (fn == null) {
+				throw new InvalidInputDataException(prefix + fieldName + " may not be null");
+			}
+			if (! useBasicInputData && fn.isBlank()) {
+				throw new InvalidInputDataException(prefix + fieldName + " may not be blank");
+			}
+		}
+
+		public void validate(boolean useBasicInputData) throws InvalidInputDataException {
+			validateFn(useBasicInputData, filenameRunits, "filenameRunits");
+			validateFn(useBasicInputData, filenameRgroups, "filenameRgroups");
+			validateFn(useBasicInputData, filenameAssocRunitsWithRgroups, "filenameAssocRunitsWithRgroups");
+			validateFn(useBasicInputData, filenameAssocRgroupsWithTasks, "filenameAssocRgroupsWithTasks");
 		}
 	}
 
 	public record InputData(
-				IndicesType indicesType,
-				String filenameTasks,
+				@NonNull IndicesType indicesType,
+				@NonNull String filenameTasks,
 				boolean useBasicInputData,
-				InputDataBasic inputDataBasic,
-				InputDataAdvanced inputDataAdvanced
+				@NonNull InputDataBasic inputDataBasic,
+				@NonNull InputDataAdvanced inputDataAdvanced
 			) {
+		@SuppressWarnings("ConstantValue")
 		public @NonNull Map<@NonNull String, @NonNull String> asMap() {
 			return new LinkedHashMap<>() {{
-					put("Indices Type", indicesType.toString());
-					put("Filename Tasks", "\"" + escapeQuotes(filenameTasks) + "\"");
-					if (useBasicInputData) {
+					if (indicesType != null) {
+						put("Indices Type", indicesType.toString());
+					}
+					if (filenameTasks != null) {
+						put("Filename Tasks", "\"" + escapeQuotes(filenameTasks) + "\"");
+					}
+					if (useBasicInputData && inputDataBasic != null) {
 						put("Input Data (basic)", convertMapToString(inputDataBasic.asMap()));
-					} else {
+					} else if (! useBasicInputData && inputDataAdvanced != null) {
 						put("Input Data (advanced)", convertMapToString(inputDataAdvanced.asMap()));
 					}
 				}};
@@ -121,24 +205,90 @@ public class AppConfig {
 			sb.append("]");
 			return sb.toString();
 		}
+
+		@SuppressWarnings("ConstantValue")
+		public void validate() throws InvalidInputDataException {
+			final String prefix = "AppConfig.InputData.";
+			if (indicesType == null) {
+				throw new InvalidInputDataException(prefix + "indicesType may not be null");
+			}
+
+			if (filenameTasks == null) {
+				throw new InvalidInputDataException(prefix + "filenameTasks may not be null");
+			}
+			if (filenameTasks.isBlank()) {
+				throw new InvalidInputDataException(prefix + "filenameTasks may not be blank");
+			}
+
+			if (inputDataBasic == null) {
+				throw new InvalidInputDataException(prefix + "inputDataBasic may not be null");
+			}
+			inputDataBasic.validate(useBasicInputData);
+
+			if (inputDataAdvanced == null) {
+				throw new InvalidInputDataException(prefix + "inputDataAdvanced may not be null");
+			}
+			inputDataAdvanced.validate(useBasicInputData);
+		}
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// -----------------------------------------------------------------------------------------------------------------
 
-	public Debugging debugging;
-	public CpmTimeUnit timeUnit;
-	public OffDutyTimes offDutyTimes;
-	public InputData inputData;
+	public @NonNull Debugging debugging;
+	public @NonNull CpmTimeUnit timeUnit;
+	public @NonNull OffDutyTimes offDutyTimes;
+	public @NonNull InputData inputData;
 
+	public AppConfig(
+				@NonNull Debugging debugging,
+				@NonNull CpmTimeUnit timeUnit,
+				@NonNull OffDutyTimes offDutyTimes,
+				@NonNull InputData inputData
+			) {
+		this.debugging = debugging;
+		this.timeUnit = timeUnit;
+		this.offDutyTimes = offDutyTimes;
+		this.inputData = inputData;
+	}
+
+	@SuppressWarnings("ConstantValue")
 	public @NonNull Map<@NonNull String, @NonNull Map<@NonNull String, @NonNull String>> asMap(boolean includeDebugInfo) {
 		return new LinkedHashMap<>() {{
-				if (includeDebugInfo) {
+				if (includeDebugInfo && debugging != null) {
 					put("Debugging", debugging.asMap());
 				}
-				put("Time Unit", new LinkedHashMap<>() {{ put("Unit", timeUnit.name()); }});
-				put("Off-Duty Times", offDutyTimes.asMap());
-				put("Input Data", inputData.asMap());
+				if (timeUnit != null) {
+					put("Time Unit", new LinkedHashMap<>() {{ put("Unit", timeUnit.name()); }});
+				}
+				if (offDutyTimes != null) {
+					put("Off-Duty Times", offDutyTimes.asMap());
+				}
+				if (inputData != null) {
+					put("Input Data", inputData.asMap());
+				}
 			}};
+	}
+
+	@SuppressWarnings("ConstantValue")
+	public void validate() throws InvalidInputDataException {
+		final String prefix = "AppConfig.";
+		if (debugging == null) {
+			throw new InvalidInputDataException(prefix + "debugging may not be null");
+		}
+
+		if (timeUnit == null) {
+			throw new InvalidInputDataException(prefix + "timeUnit may not be null");
+		}
+
+		if (offDutyTimes == null) {
+			throw new InvalidInputDataException(prefix + "offDutyTimes may not be null");
+		}
+		offDutyTimes.validate();
+
+		if (inputData == null) {
+			throw new InvalidInputDataException(prefix + "inputData may not be null");
+		}
+		inputData.validate();
 	}
 }
