@@ -80,6 +80,7 @@ public final class CliApp {
 
 		// output results as an HTML file
 		if (filenameHtmlOutput.isEmpty()) {
+			defaultOutput("(not writing results to HTML file)");
 			return;
 		}
 		defaultOutput("Writing results to HTML file '" + filenameHtmlOutput + "'");
