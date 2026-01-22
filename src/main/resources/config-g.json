@@ -1,9 +1,9 @@
 {
 	"debugging": {
-		"debugMain": true,
+		"debugMain": false,
 		"debugCpgInternals": false,
 		"debugCpgVerboseInternals": false,
-		"debugCpcInternals": true,
+		"debugCpcInternals": false,
 		"debugCpcShowPath": false
 	},
 	"timeUnit": "DAYS",
