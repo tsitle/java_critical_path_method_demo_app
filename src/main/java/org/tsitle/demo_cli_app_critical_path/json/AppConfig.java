@@ -240,6 +240,18 @@ public class AppConfig {
 	public @NonNull OffDutyTimes offDutyTimes;
 	public @NonNull InputData inputData;
 
+	/**
+	 * Constructor used by GSON during deserialization
+	 */
+	@SuppressWarnings({"DataFlowIssue", "unused"})
+	public AppConfig() {
+		this.debugging = null;
+		this.timeUnit = null;
+		this.offDutyTimes = null;
+		this.inputData = null;
+	}
+
+	@SuppressWarnings("unused")
 	public AppConfig(
 				@NonNull Debugging debugging,
 				@NonNull CpmTimeUnit timeUnit,
