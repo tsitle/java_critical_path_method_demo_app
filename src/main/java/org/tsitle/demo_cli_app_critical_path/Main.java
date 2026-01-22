@@ -27,7 +27,7 @@ public class Main implements Runnable {
 	@SuppressWarnings("unused")
 	@CommandLine.Parameters(
 			index = "0",
-			description = "path to the JSON file containing the configuration (may be prefixed with 'rsc:')"
+			description = "path to the JSON configuration file (may be prefixed with 'rsc:')"
 		)
 	private String configJsonFilename;
 
