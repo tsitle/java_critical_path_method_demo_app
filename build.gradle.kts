@@ -7,6 +7,8 @@ plugins {
 group = "org.tsitle.demo_cli_app_critical_path"
 version = "1.0"
 
+val APP_NAME = "cpm_demo"
+
 repositories {
 	mavenCentral()
 	flatDir { dirs("../lib-critical_path_method/build/libs") }
@@ -39,15 +41,21 @@ application {
 tasks.jar {
 	manifest {
 		attributes["Main-Class"] = "org.tsitle.demo_cli_app_critical_path.Main"
+		attributes["Implementation-Title"] = APP_NAME
+		attributes["Implementation-Version"] = version
 	}
 }
 
 jlink {
-	// name of the launcher script/binary produced in the image
+	// name of the launcher script produced in the launcher image
 	launcher {
-		name = "cpm"
+		name = APP_NAME
 	}
 
-	// reduce size of image
+	// output directory and ZIP filename for the launcher image
+	imageDir = File(layout.buildDirectory.get().toString(), "${APP_NAME}-${version}")
+	imageZip = File(layout.buildDirectory.get().toString(), "${APP_NAME}-${version}.zip")
+
+	// reduce the size of the launcher image
 	options.set(listOf("--strip-debug", "--compress", "zip-6", "--no-header-files", "--no-man-pages"))
 }
