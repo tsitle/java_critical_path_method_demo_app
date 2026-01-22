@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+#
+# by TS, Jan 2026
+#
+
 LVAR_GRADLE_EXE="gradle"
 
 if [ -x "./gradlew" ]; then
