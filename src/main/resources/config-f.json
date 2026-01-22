@@ -4,7 +4,7 @@
 		"debugCpgInternals": false,
 		"debugCpgVerboseInternals": false,
 		"debugCpcInternals": true,
-		"debugCpcShowPath": false
+		"debugCpcVerboseInternals": false
 	},
 	"timeUnit": "DAYS",
 	"offDutyTimes": {

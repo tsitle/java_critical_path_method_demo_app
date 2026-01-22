@@ -13,19 +13,21 @@ import java.util.*;
 public class AppConfig {
 	public record Debugging(
 				boolean debugMain,
+				@Nullable Boolean debugVerboseMain,
 				boolean debugCpgInternals,
-				boolean debugCpgVerboseInternals,
+				@Nullable Boolean debugCpgVerboseInternals,
 				boolean debugCpcInternals,
-				boolean debugCpcShowPath
+				@Nullable Boolean debugCpcVerboseInternals
 			) {
 
 		public @NonNull Map<@NonNull String, @NonNull String> asMap() {
 			return new LinkedHashMap<>() {{
 					put("Main", String.valueOf(debugMain));
+					put("Main Verbose", String.valueOf(debugVerboseMain != null ? debugVerboseMain : false));
 					put("CPG", String.valueOf(debugCpgInternals));
-					put("CPG Verbose", String.valueOf(debugCpgVerboseInternals));
+					put("CPG Verbose", String.valueOf(debugCpgVerboseInternals != null ? debugCpgVerboseInternals : false));
 					put("CPC", String.valueOf(debugCpcInternals));
-					put("CPC Show Path", String.valueOf(debugCpcShowPath));
+					put("CPC Verbose", String.valueOf(debugCpcVerboseInternals != null ? debugCpcVerboseInternals : false));
 				}};
 		}
 	}

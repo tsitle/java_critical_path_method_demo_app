@@ -21,6 +21,7 @@ import org.tsitle.demo_cli_app_critical_path.json.AppConfig;
 
 import java.io.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -47,31 +48,35 @@ public final class CliApp {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	public void start() throws IOException, InvalidInputDataException {
+		final boolean debugMain = appConfig.debugging.debugMain();
+		final boolean debugVerboseMain = (debugMain && Objects.equals(true, appConfig.debugging.debugVerboseMain()));
+		final boolean debugMainOrCpg = (debugMain || appConfig.debugging.debugCpgInternals());
+		final boolean debugMainOrCpgOrCpc = (debugMainOrCpg || appConfig.debugging.debugCpcInternals());
+
 		// read input files
 		readInputData();
 
-		/*if (appConfig.debugging.debugMain()) {
+		if (debugVerboseMain) {
 			debugOutput(CLASS_NAME + ": Raw graph:");
-			inputRawTasks.values().forEach((item) -> debugOutput(CLASS_NAME + ":   - " + item));
-		}*/
-
-		//
-		final boolean debugMainOrCpg = appConfig.debugging.debugMain() || appConfig.debugging.debugCpgInternals();
+			inputRawDataForGraph.tasks.forEach((item) -> debugOutput(CLASS_NAME + ":   - " + item));
+		}
 
 		// create graph
 		if (debugMainOrCpg) {
-			debugOutput(CLASS_NAME + ": Create Critical Path graph:");
+			debugOutput(CLASS_NAME + ": Create CPM graph...");
 		}
 		CriticalPathGraph criticalPathGraph = buildCriticalPathGraph(inputRawDataForGraph);
 
-		if (appConfig.debugging.debugMain()) {
+		if (debugVerboseMain) {
 			criticalPathGraph.printGraph(this::debugOutput, true);
-			//criticalPathGraph.printMostCriticalPath();
+
+			debugOutput(CLASS_NAME + ": Initial critical path:");
+			criticalPathGraph.printCriticalPath(this::debugOutput);
 		}
 
 		// compute CPM results
-		if (debugMainOrCpg) {
-			debugOutput(CLASS_NAME + ": Compute CPM results:");
+		if (debugMainOrCpgOrCpc) {
+			debugOutput(CLASS_NAME + ": Compute CPM results...");
 		}
 		final CpmResult cpmResult = computeCpmResult(criticalPathGraph);
 
@@ -165,7 +170,7 @@ public final class CliApp {
 				AbstractReadRawData<?, T> reader
 			) throws IOException, InvalidInputDataException {
 		if (appConfig.debugging.debugMain()) {
-			debugOutput(CLASS_NAME + ": reading from raw data file '" + filename + "'...");
+			debugOutput(CLASS_NAME + ": Read raw data file '" + filename + "'...");
 		}
 		if (! filename.startsWith("rsc:")) {
 			File file = new File(filename);
@@ -239,7 +244,7 @@ public final class CliApp {
 	private @NonNull ConvertRawToInternalDataForGraph buildConverterForGraph() {
 		return new ConvertRawToInternalDataForGraph(
 				appConfig.debugging.debugCpgInternals(),
-				appConfig.debugging.debugCpgVerboseInternals(),
+				Objects.equals(true, appConfig.debugging.debugCpgVerboseInternals()),
 				this::debugOutput,
 				appConfig.timeUnit,
 				appConfig.offDutyTimes.workDays(),
@@ -252,7 +257,7 @@ public final class CliApp {
 	private @NonNull CriticalPathGraph buildCriticalPathGraph(@NonNull RawDataForGraph inputRawDataForGraph) {
 		return new CriticalPathGraph(
 				appConfig.debugging.debugCpgInternals(),
-				appConfig.debugging.debugCpgVerboseInternals(),
+				Objects.equals(true, appConfig.debugging.debugCpgVerboseInternals()),
 				this::debugOutput,
 				inputRawDataForGraph,
 				buildConverterForGraph()
@@ -280,7 +285,7 @@ public final class CliApp {
 
 		return new CriticalPathCompute(
 				appConfig.debugging.debugCpcInternals(),
-				appConfig.debugging.debugCpcShowPath(),
+				Objects.equals(true, appConfig.debugging.debugCpcVerboseInternals()),
 				this::debugOutput,
 				criticalPathGraph,
 				appConfig.inputData.inputDataBasic().amountResourceUnits(),
@@ -293,7 +298,7 @@ public final class CliApp {
 
 		return new CriticalPathCompute(
 				appConfig.debugging.debugCpcInternals(),
-				appConfig.debugging.debugCpcShowPath(),
+				Objects.equals(true, appConfig.debugging.debugCpcVerboseInternals()),
 				this::debugOutput,
 				criticalPathGraph,
 				inputRawDataForCompute,

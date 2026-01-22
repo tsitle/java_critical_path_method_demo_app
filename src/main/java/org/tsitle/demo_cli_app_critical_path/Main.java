@@ -12,7 +12,7 @@ import java.io.*;
  * Command line tool for using the Critical Path Method library
  */
 @CommandLine.Command(
-		name = "java -jar app_demo_critical_path_method.jar",
+		name = "cpm",
 		description = "%nCommand line tool for using the Critical Path Method library%n"
 	)
 public class Main implements Runnable {
@@ -21,14 +21,11 @@ public class Main implements Runnable {
 	private boolean doPrintHelp;
 
 	@SuppressWarnings("unused")
-	@CommandLine.Option(names = {"--output-html"})
+	@CommandLine.Option(names = {"--output-html"}, description = "optional: write results to an HTML file")
 	private @Nullable String outputHtmlFilename;
 
 	@SuppressWarnings("unused")
-	@CommandLine.Parameters(
-			index = "0",
-			description = "path to the JSON configuration file (may be prefixed with 'rsc:')"
-		)
+	@CommandLine.Parameters(description = "path to the JSON configuration file (may be prefixed with 'rsc:')")
 	private String configJsonFilename;
 
 	public static void main(String[] args) {

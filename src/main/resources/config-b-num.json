@@ -2,9 +2,7 @@
 	"debugging": {
 		"debugMain": true,
 		"debugCpgInternals": false,
-		"debugCpgVerboseInternals": false,
-		"debugCpcInternals": true,
-		"debugCpcShowPath": false
+		"debugCpcInternals": true
 	},
 	"timeUnit": "DAYS",
 	"offDutyTimes": {
