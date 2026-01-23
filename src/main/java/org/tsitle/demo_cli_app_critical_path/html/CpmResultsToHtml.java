@@ -21,12 +21,7 @@ import java.util.stream.Collectors;
 public final class CpmResultsToHtml {
 	private final @NonNull AppConfig appConfig;
 	private final @NonNull CpmResult cpmResult;
-	private final List<@NonNull CpmPostProcessedTask> postProcessedTasks;
-	private final long projectTotalTimeSpent;
-	private final long projectTotalOffDutyTime;
-	private final long projectTotalWorkingTime;
-	private final long projectTimeUntilEnd;
-	private final long projectOffDutyTimeUntilEnd;
+	private final @NonNull CpmPostProcessedResults postProcessedResults;
 	private final @NonNull String outputFilename;
 	private @Nullable OutputStream outputStream = null;
 
@@ -46,16 +41,10 @@ public final class CpmResultsToHtml {
 				appConfig.offDutyTimes().workDays(),
 				appConfig.offDutyTimes().workHours(),
 				appConfig.offDutyTimes().holidaysAsLocalDates(),
-				cpmResult,
-				presentDateTime
+				presentDateTime,
+				cpmResult
 			);
-		this.postProcessedTasks = rppObj.processTasks();
-
-		projectTotalTimeSpent = rppObj.computeTotalTimeSpent(this.postProcessedTasks);
-		projectTotalOffDutyTime = rppObj.computeTotalOffDutyTimeDuringProjectsTimeSpan(this.postProcessedTasks);
-		projectTotalWorkingTime = projectTotalTimeSpent - projectTotalOffDutyTime;
-		projectTimeUntilEnd = rppObj.computeTimeLeftUntilProjectsEnd(this.postProcessedTasks);
-		projectOffDutyTimeUntilEnd = rppObj.computeOffDutyTimeLeftUntilProjectsEnd(this.postProcessedTasks);
+		this.postProcessedResults = rppObj.processTasks();
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
@@ -159,7 +148,7 @@ public final class CpmResultsToHtml {
 				"</div>");
 	}
 
-	private CpmPostProcessedTask createEmptyPpTask() {
+	private CpmPostProcessedSubResultTask createEmptyPpTask() {
 		CpmSubResultTask srTask = new CpmSubResultTask(
 				0,
 				"-",
@@ -174,7 +163,7 @@ public final class CpmResultsToHtml {
 				null,
 				null
 			);
-		return new CpmPostProcessedTask(srTask.id(), srTask);
+		return new CpmPostProcessedSubResultTask(srTask.id(), srTask);
 	}
 
 	private CpmSubResultRgroup createEmptySrRgroup() {
@@ -225,10 +214,10 @@ public final class CpmResultsToHtml {
 
 		writeOverviewTasksEntryHeader();
 
-		if (postProcessedTasks.isEmpty()) {
+		if (postProcessedResults.postProcessedTasks().isEmpty()) {
 			writeOverviewTasksEntryTask(createEmptyPpTask(), true);
 		}
-		for (CpmPostProcessedTask ppTask : postProcessedTasks) {
+		for (CpmPostProcessedSubResultTask ppTask : postProcessedResults.postProcessedTasks()) {
 			writeOverviewTasksEntryTask(ppTask, false);
 		}
 
@@ -246,7 +235,7 @@ public final class CpmResultsToHtml {
 			);
 	}
 
-	private void writeOverviewTasksEntryTask(CpmPostProcessedTask ppTask, boolean isEmptyEntry) throws IOException {
+	private void writeOverviewTasksEntryTask(CpmPostProcessedSubResultTask ppTask, boolean isEmptyEntry) throws IOException {
 		String runitStr = "-";
 		String rgroupStr = "-";
 		String durationStr = "-";
@@ -305,19 +294,21 @@ public final class CpmResultsToHtml {
 		final String timeUnitStr = appConfig.timeUnit().toString().toLowerCase();
 		writeln(3, "<ul>");
 		writeln(4, "<li><span>Minimum time required to complete all tasks: " +
-				projectTotalTimeSpent + " " + timeUnitStr + "</span><br />" +
-				"<span>(including " + projectTotalOffDutyTime + " off-duty " + timeUnitStr + ")</span></li>");
+				postProcessedResults.totalTimeSpent() + " " + timeUnitStr + "</span><br />" +
+				"<span>(including " + postProcessedResults.totalOffDutyTimeDuringProjectsTimeSpan() +
+				" off-duty " + timeUnitStr + ")</span></li>");
 		final String idealWorkingTimeStr = "<br /><span>(the ideal would be " + cpmResult.timePassed() +
 				" working " + timeUnitStr + ")</span>";
 		final String maybeProblemStr = " <span><strong>There might be a problem in the input data</strong></span>";
 		writeln(4, "<li><span>Minimum working time required to complete all tasks: " +
-				projectTotalWorkingTime + " working " + timeUnitStr + "</span>" +
-				(projectTotalWorkingTime == cpmResult.timePassed() ? "" : idealWorkingTimeStr) +
-				(projectTotalWorkingTime >= cpmResult.timePassed() ? "" : maybeProblemStr) +
+				postProcessedResults.totalWorkingTime() + " working " + timeUnitStr + "</span>" +
+				(postProcessedResults.totalWorkingTime() == cpmResult.timePassed() ? "" : idealWorkingTimeStr) +
+				(postProcessedResults.totalWorkingTime() >= cpmResult.timePassed() ? "" : maybeProblemStr) +
 				"</li>");
 		writeln(4, "<li><span>Minimum time left until all tasks have been completed: " +
-				projectTimeUntilEnd + " " + timeUnitStr + "</span><br />" +
-				"<span>(including " + projectOffDutyTimeUntilEnd + " off-duty " + timeUnitStr + ")</span></li>");
+				postProcessedResults.timeLeftUntilProjectsEnd() + " " + timeUnitStr + "</span><br />" +
+				"<span>(including " + postProcessedResults.offDutyTimeLeftUntilProjectsEnd() +
+				" off-duty " + timeUnitStr + ")</span></li>");
 		writeln(4, "<li><span>Accumulated time that Resource Units idled: " +
 				cpmResult.timeIdled() + " working " + timeUnitStr + "</span><br />" +
 				"<span>(when there were pending Tasks but no new Task could be started<br />" +
@@ -526,7 +517,7 @@ public final class CpmResultsToHtml {
 		writeln(2, "];");
 
 		writeln(2, "const LOC_TASKS = [");
-		for (CpmPostProcessedTask ppTask : postProcessedTasks) {
+		for (CpmPostProcessedSubResultTask ppTask : postProcessedResults.postProcessedTasks()) {
 			final String dependenciesStr = ppTask.srTask().dependenciesIds().stream()
 					.map(String::valueOf)
 					.collect(Collectors.joining(","));
