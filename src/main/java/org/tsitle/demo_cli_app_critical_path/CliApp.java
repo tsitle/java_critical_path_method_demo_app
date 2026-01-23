@@ -65,20 +65,20 @@ public final class CliApp {
 		if (debugMainOrCpg) {
 			debugOutput(CLASS_NAME + ": Create CPM graph...");
 		}
-		CriticalPathGraph criticalPathGraph = buildCriticalPathGraph(inputRawDataForGraph);
+		CriticalPathGraph cpGraph = buildCriticalPathGraph(inputRawDataForGraph);
 
 		if (debugVerboseMain) {
-			criticalPathGraph.printGraph(this::debugOutput, true);
+			cpGraph.printGraph(this::debugOutput, true);
 
 			debugOutput(CLASS_NAME + ": Initial critical path:");
-			criticalPathGraph.printCriticalPath(this::debugOutput);
+			cpGraph.printCriticalPath(this::debugOutput);
 		}
 
 		// compute CPM results
 		if (debugMainOrCpgOrCpc) {
 			debugOutput(CLASS_NAME + ": Compute CPM results...");
 		}
-		final CpmResult cpmResult = computeCpmResult(criticalPathGraph);
+		final CpmResult cpmResult = computeCpmResult(cpGraph);
 
 		// print results
 		printResults(cpmResult);
