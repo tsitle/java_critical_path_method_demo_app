@@ -10,7 +10,13 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
 
-public class AppConfig {
+public record AppConfig(
+			@NonNull Debugging debugging,
+			@NonNull CpmTimeUnit timeUnit,
+			@NonNull OffDutyTimes offDutyTimes,
+			@NonNull InputData inputData
+		) {
+
 	public record Debugging(
 				boolean debugMain,
 				@Nullable Boolean debugVerboseMain,
@@ -237,33 +243,12 @@ public class AppConfig {
 	// -----------------------------------------------------------------------------------------------------------------
 	// -----------------------------------------------------------------------------------------------------------------
 
-	public @NonNull Debugging debugging;
-	public @NonNull CpmTimeUnit timeUnit;
-	public @NonNull OffDutyTimes offDutyTimes;
-	public @NonNull InputData inputData;
-
 	/**
 	 * Constructor used by GSON during deserialization
 	 */
 	@SuppressWarnings({"DataFlowIssue", "unused"})
 	public AppConfig() {
-		this.debugging = null;
-		this.timeUnit = null;
-		this.offDutyTimes = null;
-		this.inputData = null;
-	}
-
-	@SuppressWarnings("unused")
-	public AppConfig(
-				@NonNull Debugging debugging,
-				@NonNull CpmTimeUnit timeUnit,
-				@NonNull OffDutyTimes offDutyTimes,
-				@NonNull InputData inputData
-			) {
-		this.debugging = debugging;
-		this.timeUnit = timeUnit;
-		this.offDutyTimes = offDutyTimes;
-		this.inputData = inputData;
+		this(null, null, null, null);
 	}
 
 	@SuppressWarnings("ConstantValue")

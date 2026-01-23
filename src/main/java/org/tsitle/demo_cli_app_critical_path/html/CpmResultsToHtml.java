@@ -42,10 +42,10 @@ public final class CpmResultsToHtml {
 
 		//
 		final ResultsPostProcessing rppObj = new ResultsPostProcessing(
-				appConfig.timeUnit,
-				appConfig.offDutyTimes.workDays(),
-				appConfig.offDutyTimes.workHours(),
-				appConfig.offDutyTimes.holidaysAsLocalDates(),
+				appConfig.timeUnit(),
+				appConfig.offDutyTimes().workDays(),
+				appConfig.offDutyTimes().workHours(),
+				appConfig.offDutyTimes().holidaysAsLocalDates(),
 				cpmResult,
 				presentDateTime
 			);
@@ -271,7 +271,7 @@ public final class CpmResultsToHtml {
 			durationStr = ppTask.durationOrg() + timeUnitLabel +
 					" (+ " + ppTask.durationDelta() + timeUnitLabel + ")";
 
-			final DateTimeFormatter formatter = DateFormatters.getFormatterForTimeUnit(appConfig.timeUnit);
+			final DateTimeFormatter formatter = DateFormatters.getFormatterForTimeUnit(appConfig.timeUnit());
 
 			timeStartedStr = ppTask.taskStartedAdjustedDateTime().format(formatter);
 			timeFinishedStr = ppTask.taskFinishedAdjustedDateTime().format(formatter);
@@ -302,7 +302,7 @@ public final class CpmResultsToHtml {
 		writeHeadline(2, "h2", "Statistics");
 		writeln(2, "<div>");
 
-		final String timeUnitStr = appConfig.timeUnit.toString().toLowerCase();
+		final String timeUnitStr = appConfig.timeUnit().toString().toLowerCase();
 		writeln(3, "<ul>");
 		writeln(4, "<li><span>Minimum time required to complete all tasks: " +
 				projectTotalTimeSpent + " " + timeUnitStr + "</span><br />" +
@@ -517,7 +517,7 @@ public final class CpmResultsToHtml {
 		writeln(1, "<script type=\"text/javascript\">");
 
 		writeln(2, "const LOC_HOLIDAYS = [");
-		for (LocalDate holiday : appConfig.offDutyTimes.holidaysAsLocalDates()) {
+		for (LocalDate holiday : appConfig.offDutyTimes().holidaysAsLocalDates()) {
 			writeln(3, "{");
 			writeln(4, "name: 'Holiday " + holiday.format(DateFormatters.onlyDate) + "',");
 			writeln(4, "date: '" + holiday.format(DateFormatters.onlyDate) + "'");
@@ -545,11 +545,11 @@ public final class CpmResultsToHtml {
 		 * Available view modes: Hour, Quarter Day, Half Day, Day, Week, Month, Year
 		 */
 		final String viewMode;
-		switch (appConfig.timeUnit) {
+		switch (appConfig.timeUnit()) {
 			case MINUTES -> viewMode = "Hour";
 			case HOURS -> viewMode = "Quarter Day";
 			case DAYS -> viewMode = "Week";
-			default -> throw new IllegalStateException("Unexpected value: " + appConfig.timeUnit);
+			default -> throw new IllegalStateException("Unexpected value: " + appConfig.timeUnit());
 		}
 		writeln(2, "new Gantt(\"#" + Constants.CSS_ID_GANTT_CHART_JS + "\", LOC_TASKS, " +
 				"{view_mode: '" + viewMode + "', view_mode_select: true, " +
@@ -566,7 +566,7 @@ public final class CpmResultsToHtml {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	private String getTimeUnitLabel() {
-		return appConfig.timeUnit.getLabel();
+		return appConfig.timeUnit().getLabel();
 	}
 
 	private static String escapeHtml(@Nullable String str) {

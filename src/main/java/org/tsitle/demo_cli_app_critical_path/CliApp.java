@@ -48,10 +48,10 @@ public final class CliApp {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	public void start() throws IOException, InvalidInputDataException {
-		final boolean debugMain = appConfig.debugging.debugMain();
-		final boolean debugVerboseMain = (debugMain && Objects.equals(true, appConfig.debugging.debugVerboseMain()));
-		final boolean debugMainOrCpg = (debugMain || appConfig.debugging.debugCpgInternals());
-		final boolean debugMainOrCpgOrCpc = (debugMainOrCpg || appConfig.debugging.debugCpcInternals());
+		final boolean debugMain = appConfig.debugging().debugMain();
+		final boolean debugVerboseMain = (debugMain && Objects.equals(true, appConfig.debugging().debugVerboseMain()));
+		final boolean debugMainOrCpg = (debugMain || appConfig.debugging().debugCpgInternals());
+		final boolean debugMainOrCpgOrCpc = (debugMainOrCpg || appConfig.debugging().debugCpcInternals());
 
 		// read input files
 		readInputData();
@@ -108,7 +108,7 @@ public final class CliApp {
 
 	private @NonNull CpmResult computeCpmResult(@NonNull CriticalPathGraph criticalPathGraph) {
 		final CriticalPathCompute cpCompute;
-		if (appConfig.inputData.useBasicInputData()) {
+		if (appConfig.inputData().useBasicInputData()) {
 			cpCompute = buildCriticalPathComputeBasic(criticalPathGraph);
 		} else {
 			cpCompute = buildCriticalPathComputeAdvanced(criticalPathGraph);
@@ -121,7 +121,7 @@ public final class CliApp {
 	private void printResults(@NonNull CpmResult cpmResult) {
 		defaultOutput("Full results:");
 
-		final String timeUnitLabel = appConfig.timeUnit.getLabel();
+		final String timeUnitLabel = appConfig.timeUnit().getLabel();
 
 		defaultOutput("  Tasks:");
 		for (CpmSubResultTask tempResultsTask : cpmResult.resultsTasks()) {
@@ -159,7 +159,7 @@ public final class CliApp {
 		defaultOutput("    - Resource Groups          " + inputRawDataForCompute.rgroups.size());
 		defaultOutput("    - Resource Units           " + inputRawDataForCompute.runits.size());
 		defaultOutput("    - Minimum time requirement " + cpmResult.timePassed() + " " +
-				appConfig.timeUnit.toString().toLowerCase());
+				appConfig.timeUnit().toString().toLowerCase());
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
@@ -169,7 +169,7 @@ public final class CliApp {
 				Set<T> outputSet,
 				AbstractReadRawData<?, T> reader
 			) throws IOException, InvalidInputDataException {
-		if (appConfig.debugging.debugMain()) {
+		if (appConfig.debugging().debugMain()) {
 			debugOutput(CLASS_NAME + ": Read raw data file '" + filename + "'...");
 		}
 		if (! filename.startsWith("rsc:")) {
@@ -187,31 +187,31 @@ public final class CliApp {
 	private void readInputData() throws IOException, InvalidInputDataException {
 		String currentFilename = "----";
 		try {
-			final boolean areIndicesNumerical = (appConfig.inputData.indicesType() == AppConfig.IndicesType.NUM);
+			final boolean areIndicesNumerical = (appConfig.inputData().indicesType() == AppConfig.IndicesType.NUM);
 
-			currentFilename = appConfig.inputData.filenameTasks();
+			currentFilename = appConfig.inputData().filenameTasks();
 			final AbstractReadRawDataTasks<?> rrg1 =
 					(areIndicesNumerical ? new ReadRawTasksOfIdLong() : new ReadRawTasksOfIdString());
 			readInputDataForContainerType(currentFilename, inputRawDataForGraph.tasks, rrg1);
 
-			if (! appConfig.inputData.useBasicInputData()) {
-				currentFilename = appConfig.inputData.inputDataAdvanced().filenameRunits();
+			if (! appConfig.inputData().useBasicInputData()) {
+				currentFilename = appConfig.inputData().inputDataAdvanced().filenameRunits();
 				final AbstractReadRawDataRunits<?> rrg2 =
 						(areIndicesNumerical ? new ReadRawRunitsOfIdLong() : new ReadRawRunitsOfIdString());
 				readInputDataForContainerType(currentFilename, inputRawDataForCompute.runits, rrg2);
 
-				currentFilename = appConfig.inputData.inputDataAdvanced().filenameRgroups();
+				currentFilename = appConfig.inputData().inputDataAdvanced().filenameRgroups();
 				final AbstractReadRawDataRgroups<?> rrg3 =
 						(areIndicesNumerical ? new ReadRawRgroupsOfIdLong() : new ReadRawRgroupsOfIdString());
 				readInputDataForContainerType(currentFilename, inputRawDataForCompute.rgroups, rrg3);
 
-				currentFilename = appConfig.inputData.inputDataAdvanced().filenameAssocRunitsWithRgroups();
+				currentFilename = appConfig.inputData().inputDataAdvanced().filenameAssocRunitsWithRgroups();
 				final AbstractReadRawDataAssociateRunitsWithRgroups<?> rrg4 =
 						(areIndicesNumerical ? new ReadRawAssociateRunitsWithRgroupsOfIdLong() :
 								new ReadRawAssociateRunitsWithRgroupsOfIdString());
 				readInputDataForContainerType(currentFilename, inputRawDataForCompute.assocRunitsWithRgroups, rrg4);
 
-				currentFilename = appConfig.inputData.inputDataAdvanced().filenameAssocRgroupsWithTasks();
+				currentFilename = appConfig.inputData().inputDataAdvanced().filenameAssocRgroupsWithTasks();
 				final AbstractReadRawDataAssociateRgroupsWithTasks<?> rrg5 =
 						(areIndicesNumerical ? new ReadRawAssociateRgroupsWithTasksOfIdLong() :
 								new ReadRawAssociateRgroupsWithTasksOfIdString());
@@ -229,8 +229,8 @@ public final class CliApp {
 
 	private @NonNull LocalDateTime determinePresentDateTime() {
 		final LocalDateTime tmpNow = LocalDateTime.now();
-		final boolean needMinutes = (appConfig.timeUnit == CpmTimeUnit.MINUTES);
-		final boolean needHours = (needMinutes || appConfig.timeUnit == CpmTimeUnit.HOURS);
+		final boolean needMinutes = (appConfig.timeUnit() == CpmTimeUnit.MINUTES);
+		final boolean needHours = (needMinutes || appConfig.timeUnit() == CpmTimeUnit.HOURS);
 		return LocalDateTime.of(
 				tmpNow.getYear(),
 				tmpNow.getMonth(),
@@ -243,21 +243,18 @@ public final class CliApp {
 
 	private @NonNull ConvertRawToInternalDataForGraph buildConverterForGraph() {
 		return new ConvertRawToInternalDataForGraph(
-				appConfig.debugging.debugCpgInternals(),
-				Objects.equals(true, appConfig.debugging.debugCpgVerboseInternals()),
-				this::debugOutput,
-				appConfig.timeUnit,
-				appConfig.offDutyTimes.workDays(),
-				appConfig.offDutyTimes.workHours(),
-				appConfig.offDutyTimes.holidaysAsLocalDates(),
+				appConfig.timeUnit(),
+				appConfig.offDutyTimes().workDays(),
+				appConfig.offDutyTimes().workHours(),
+				appConfig.offDutyTimes().holidaysAsLocalDates(),
 				presentDateTime
 			);
 	}
 
 	private @NonNull CriticalPathGraph buildCriticalPathGraph(@NonNull RawDataForGraph inputRawDataForGraph) {
 		return new CriticalPathGraph(
-				appConfig.debugging.debugCpgInternals(),
-				Objects.equals(true, appConfig.debugging.debugCpgVerboseInternals()),
+				appConfig.debugging().debugCpgInternals(),
+				Objects.equals(true, appConfig.debugging().debugCpgVerboseInternals()),
 				this::debugOutput,
 				inputRawDataForGraph,
 				buildConverterForGraph()
@@ -275,31 +272,28 @@ public final class CliApp {
 
 	private @NonNull ConvertRawToInternalDataForCompute buildConverterForCompute() {
 		return new ConvertRawToInternalDataForCompute(
-				appConfig.debugging.debugCpcInternals(),
+				appConfig.debugging().debugCpcInternals(),
 				this::debugOutput
 			);
 	}
 
 	private @NonNull CriticalPathCompute buildCriticalPathComputeBasic(@NonNull CriticalPathGraph criticalPathGraph) {
-		assert (appConfig.inputData.useBasicInputData());
+		assert (appConfig.inputData().useBasicInputData());
 
 		return new CriticalPathCompute(
-				appConfig.debugging.debugCpcInternals(),
-				Objects.equals(true, appConfig.debugging.debugCpcVerboseInternals()),
+				appConfig.debugging().debugCpcInternals(),
+				Objects.equals(true, appConfig.debugging().debugCpcVerboseInternals()),
 				this::debugOutput,
 				criticalPathGraph,
-				appConfig.inputData.inputDataBasic().amountResourceUnits(),
+				appConfig.inputData().inputDataBasic().amountResourceUnits(),
 				buildConverterForCompute()
 			);
 	}
 
 	private @NonNull CriticalPathCompute buildCriticalPathComputeAdvanced(@NonNull CriticalPathGraph criticalPathGraph) {
-		assert (! appConfig.inputData.useBasicInputData());
+		assert (! appConfig.inputData().useBasicInputData());
 
 		return new CriticalPathCompute(
-				appConfig.debugging.debugCpcInternals(),
-				Objects.equals(true, appConfig.debugging.debugCpcVerboseInternals()),
-				this::debugOutput,
 				criticalPathGraph,
 				inputRawDataForCompute,
 				buildConverterForCompute()
