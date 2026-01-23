@@ -11,7 +11,6 @@ val APP_NAME = "cpm_demo"
 
 repositories {
 	mavenCentral()
-	flatDir { dirs("../lib-critical_path_method/build/libs") }
 }
 
 dependencies {
@@ -22,7 +21,7 @@ dependencies {
 	implementation("com.google.guava:guava:33.5.0-jre")  // for HTML escaping
 	implementation("com.google.code.gson:gson:2.13.2")  // for JSON deserialization
 	implementation("info.picocli:picocli:4.7.7")  // for CLI arguments parsing
-	implementation(":lib_critical_path_method:1.0")
+	implementation("io.github.tsitle:criticalpath:1.0")
 }
 
 java {
