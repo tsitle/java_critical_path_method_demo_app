@@ -20,6 +20,8 @@ import org.tsitle.demo_cli_app_critical_path.html.CpmResultsToHtml;
 import org.tsitle.demo_cli_app_critical_path.json.AppConfig;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Set;
@@ -173,11 +175,12 @@ public final class CliApp {
 			debugOutput(CLASS_NAME + ": Read raw data file '" + filename + "'...");
 		}
 		if (! filename.startsWith("rsc:")) {
-			File file = new File(filename);
+			Path path = Paths.get(filename).normalize();
+			File file = path.toFile();
 			try (InputStream is = new FileInputStream(file)) {  // throws FileNotFoundException
 				reader.readFromStream(is, outputSet);
 			} catch (FileNotFoundException e) {
-				throw new IOException("file '" + filename + "' not found");
+				throw new IOException("file '" + filename + "' not found (absolute path '" + path.toAbsolutePath() + "')");
 			}
 		} else {
 			reader.readFromResourcesFile(filename.substring(4), outputSet);

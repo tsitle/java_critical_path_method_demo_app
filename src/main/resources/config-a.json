@@ -40,7 +40,7 @@
 	},
 	"inputData": {
 		"indicesType": "NUM",
-		"filenameTasks": "src/main/resources/sample-a-tasks-w03-m065-num.csv",
+		"filenameTasks": "rsc:sample-a-tasks-w03-m065-num.csv",
 		"useBasicInputData": true,
 		"inputDataBasic": {
 			"amountResourceUnits": 3
