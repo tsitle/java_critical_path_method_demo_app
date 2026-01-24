@@ -4,8 +4,23 @@
 # by TS, Jan 2026
 #
 
+LCFG_APP_VERSION="1.0"
+LCFG_BIN_EXE_TEMPLATE="build/cpm_demo-###OS###-###ARCH###-${LCFG_APP_VERSION}/bin/cpm_demo"
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+if [ -z "${LCFG_APP_VERSION}" ]; then
+	echo "$0: empty version 'LCFG_APP_VERSION'. Aborting" >&2
+	exit 1
+fi
+if [ -z "${LCFG_BIN_EXE_TEMPLATE}" ]; then
+	echo "$0: empty filename 'LCFG_BIN_EXE_TEMPLATE'. Aborting" >&2
+	exit 1
+fi
+
+# ----------------------------------------------------------------------------------------------------------------------
+
 LVAR_GRADLE_EXE="gradle"
-LVAR_BIN_EXE="build/image/bin/cpm"
 
 if [ -x "./gradlew" ]; then
 	LVAR_GRADLE_EXE="./gradlew"
@@ -17,6 +32,53 @@ fi
 if [ ! -x "${LVAR_BIN_EXE}" ]; then
 	"${LVAR_GRADLE_EXE}" :jlink || exit 1
 fi
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+_getCpuArch() {
+	case "$(uname -m)" in
+		x86_64*)
+				echo -n "x64"
+				;;
+		i686*)
+				echo -n "x86"
+				;;
+		arm64*|aarch64*)  # macOS:arm64, linux:aarch64
+				echo -n "aarch64"
+				;;
+		armv7*)
+				echo -n "armhf"
+				;;
+		*)
+				echo "Error: Unknown CPU architecture '$(uname -m)'" >>/dev/stderr
+				return 1
+				;;
+	esac
+	return 0
+}
+
+_getCpuArch >/dev/null || exit 1
+
+_getOsType() {
+	case "${OSTYPE}" in
+		linux*) echo -n "linux";;
+		darwin*) echo -n "macos";;
+		*)
+			echo "$0: Error: Unknown OSTYPE '$OSTYPE'" >&2
+			return 1
+			;;
+	esac
+	return 0
+}
+
+_getOsType >/dev/null || exit 1
+
+LVAR_OS="$(_getOsType)"
+LVAR_ARCH="$(_getCpuArch)"
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+LVAR_BIN_EXE="$(echo -n "${LCFG_BIN_EXE_TEMPLATE}" | sed -e "s/###OS###/${LVAR_OS}/" -e "s/###ARCH###/${LVAR_ARCH}/")"
 
 if [ ! -x "${LVAR_BIN_EXE}" ]; then
 	echo "$0: could not find executable '${LVAR_BIN_EXE}'. Aborting" >&2
