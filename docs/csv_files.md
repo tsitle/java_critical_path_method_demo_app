@@ -30,6 +30,9 @@ Required columns:
 - `StartedAtUTC`: Optional start date (and time) of the **Task** in the UTC time zone. E.g. `2026-03-20T13:52:00Z`, `2026-03-20 13:52:00` or `2026-03-20`
 - `FinishedAtUTC`: Optional finish date (and time) of the **Task** in the UTC time zone
 
+The date/times are expected to be in the UTC time zone and will automatically
+be converted to the local time zone.
+
 **Example file**:
 
 ``` csv
