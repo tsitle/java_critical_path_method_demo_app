@@ -26,6 +26,8 @@ Or if your project requires machines, you may find that you need to buy more mac
 
 ## Usage
 
+Binary distribution releases of the app are available at [https://github.com/tsitle/java_critical_path_method_demo_app/releases](https://github.com/tsitle/java_critical_path_method_demo_app/releases).
+
 ```
 cpm_demo [-hV] [--output-html=<outputHtmlFilename>] <configJsonFilename>
 
@@ -38,7 +40,7 @@ cpm_demo [-hV] [--output-html=<outputHtmlFilename>] <configJsonFilename>
 ### Example #1 (using a released version of the app):
 
 ``` bash
-./cpm_demo-1.0/bin/cpm_demo --output-html="output-sample-g.html" "rsc:config-g.json"
+./cpm_demo-linux-x64-1.0/bin/cpm_demo --output-html="output-sample-g.html" "rsc:config-g.json"
 ```
 
 The prefix `rsc:` in the config filename indicates that the file is located in the Java resources folder  
@@ -49,7 +51,7 @@ and is therefore packaged with the application bundle.
 If you want to use a custom configuration file:
 
 ``` bash
-./cpm_demo-1.0/bin/cpm_demo --output-html="output-custom.html" "config_files/config.json"
+./cpm_demo-linux-x64-1.0/bin/cpm_demo --output-html="output-custom.html" "config_files/config.json"
 ```
 
 ### Example #3 (using Gradle to build the app from the source code and run it):
