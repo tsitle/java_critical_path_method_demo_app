@@ -7,8 +7,11 @@ build/
 
 output-*.html
 
-dist/
-distPre/
+x-gradlew-*-*.sh
+x-gradlew-*-*.cmd
+
+/dist/
+/distPre/
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
@@ -37,7 +40,6 @@ bin/
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
-/dist/
 /nbdist/
 /.nb-gradle/
 
