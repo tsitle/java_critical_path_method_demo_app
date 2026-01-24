@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "org.tsitle.demo_cli_app_critical_path"
-version = "1.0"
+version = "1.0.1"
 
 val propProjName = "cpm_demo"
 
@@ -59,6 +59,8 @@ println("Host: ${osName}-${cpuArch}")
 
 repositories {
 	mavenCentral()
+	// for local development:
+	//flatDir { dirs("../lib-critical_path_method/build/libs") }
 }
 
 dependencies {
@@ -69,7 +71,12 @@ dependencies {
 	implementation("com.google.guava:guava:33.5.0-jre")  // for HTML escaping
 	implementation("com.google.code.gson:gson:2.13.2")  // for JSON deserialization
 	implementation("info.picocli:picocli:4.7.7")  // for CLI arguments parsing
-	implementation("io.github.tsitle:criticalpath:1.0")
+
+	// use official release:
+	implementation("io.github.tsitle:criticalpath:1.0.1")
+
+	// for local development:
+	//implementation(":lib_critical_path_method:1.0.1")
 }
 
 java {
