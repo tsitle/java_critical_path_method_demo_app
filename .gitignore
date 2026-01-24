@@ -7,8 +7,8 @@ build/
 
 output-*.html
 
-x-gradlew-*-*.sh
-x-gradlew-*-*.cmd
+x-gradlew-*.sh
+x-gradlew-*.cmd
 
 /dist/
 /distPre/
