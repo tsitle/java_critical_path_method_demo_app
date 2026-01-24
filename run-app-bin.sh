@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
 #
+# Run portable app
+#
 # by TS, Jan 2026
 #
 
-LCFG_APP_VERSION="1.0"
+LCFG_APP_VERSION="1.0.1"
 LCFG_BIN_EXE_TEMPLATE="build/cpm_demo-###OS###-###ARCH###-${LCFG_APP_VERSION}/bin/cpm_demo"
 
 # ----------------------------------------------------------------------------------------------------------------------

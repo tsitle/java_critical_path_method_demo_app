@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 #
+# Run app using Gradle
+#
 # by TS, Jan 2026
 #
 
