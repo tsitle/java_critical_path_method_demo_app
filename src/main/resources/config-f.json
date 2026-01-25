@@ -9,11 +9,11 @@
 	"timeUnit": "DAYS",
 	"offDutyTimes": {
 		"workDays": [
-			"MONDAY",
-			"TUESDAY",
 			"WEDNESDAY",
 			"THURSDAY",
-			"FRIDAY"
+			"FRIDAY",
+			"SATURDAY",
+			"SUNDAY"
 		],
 		"workHours": [
 			{
