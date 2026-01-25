@@ -22,6 +22,8 @@ class Constants {
 	static final String CSS_GANTT_CHART_JS_PROGRESS_COLOR = "#b6ce97";  // original: #dbdbdb
 	static final String CSS_GANTT_CHART_JS_WEEKEND_COLOR = "#e6e6e6";  // original: #f7f7f7
 	static final String CSS_GANTT_CHART_JS_HOLIDAY_COLOR = "#e4d1d0";
+	static final String CSS_GANTT_CHART_JS_WORKDAY_COLOR = "#fafff3";
+	static final String CSS_GANTT_CHART_JS_WEEKENDWORKDAY_COLOR = "#e0f0d0";
 	static final String CSS_GANTT_CHART_JS_POPUP_BG_COLOR = "#fffcef";  // original: #fff
 
 	static final String CSS_TABLE_BG_COLOR = "#d4e5ff";

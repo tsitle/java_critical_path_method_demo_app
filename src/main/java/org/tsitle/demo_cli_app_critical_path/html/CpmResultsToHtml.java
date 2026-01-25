@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -546,12 +547,63 @@ public final class CpmResultsToHtml {
 				"{view_mode: '" + viewMode + "', view_mode_select: true, " +
 					"readonly_progress: true, readonly_dates: true, readonly: true, " +
 					"holidays: { " +
-						"'var(--g-weekend-highlight-color)': 'weekend', " +
+						//"'var(--g-weekend-highlight-color)': 'weekend', " +  // defaults to Saturdays and Sundays
+						getGanttConfig_daysOnOffDutyColor(true) +
+						getGanttConfig_daysOnOffDutyColor(false) +
+						getGanttConfig_daysWeekendOnDutyColor() +
 						"'" + Constants.CSS_GANTT_CHART_JS_HOLIDAY_COLOR + "': LOC_HOLIDAYS " +
 					"}" +
 				"});");
 
 		writeln(1, "</script>");
+	}
+
+	private @NonNull String getGanttConfig_daysOnOffDutyColor(boolean getOffDuty) {
+		List<String> tmpCondList = new ArrayList<>();
+		Map<DayOfWeek, Integer> tmpMap = new HashMap<>() {{
+				// in JavaScript Sunday is 0 and Saturday is 6
+				put(DayOfWeek.MONDAY, 1); put(DayOfWeek.TUESDAY, 2); put(DayOfWeek.WEDNESDAY, 3);
+				put(DayOfWeek.THURSDAY, 4); put(DayOfWeek.FRIDAY, 5);
+				if (getOffDuty) {
+					put(DayOfWeek.SATURDAY, 6); put(DayOfWeek.SUNDAY, 0);
+				}
+			}};
+		for (DayOfWeek dow : tmpMap.keySet()) {
+			if ((getOffDuty && ! appConfig.offDutyTimes().workDays().contains(dow)) ||
+					(! getOffDuty && appConfig.offDutyTimes().workDays().contains(dow))) {
+				tmpCondList.add("d.getDay() === " + tmpMap.get(dow));
+			}
+		}
+		return getGanttConfig_daysColorJsString(
+				tmpCondList,
+				getOffDuty ? "var(--g-weekend-highlight-color)" : Constants.CSS_GANTT_CHART_JS_WORKDAY_COLOR
+			);
+	}
+
+	private @NonNull String getGanttConfig_daysWeekendOnDutyColor() {
+		List<String> tmpCondList = new ArrayList<>();
+		Map<DayOfWeek, Integer> tmpMap = new HashMap<>() {{
+				// in JavaScript Sunday is 0 and Saturday is 6
+				put(DayOfWeek.SATURDAY, 6); put(DayOfWeek.SUNDAY, 0);
+			}};
+		for (DayOfWeek dow : tmpMap.keySet()) {
+			if (appConfig.offDutyTimes().workDays().contains(dow)) {
+				tmpCondList.add("d.getDay() === " + tmpMap.get(dow));
+			}
+		}
+		return getGanttConfig_daysColorJsString(tmpCondList, Constants.CSS_GANTT_CHART_JS_WEEKENDWORKDAY_COLOR);
+	}
+
+	private @NonNull String getGanttConfig_daysColorJsString(
+				@NonNull List<@NonNull String> conditionList,
+				@NonNull String colorStr
+			) {
+		String resS = "";
+		if (! conditionList.isEmpty()) {
+			String tmpCondStr = String.join(" || ", conditionList);
+			resS = "'" + colorStr + "': (d) => " + tmpCondStr + ",";
+		}
+		return resS;
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
