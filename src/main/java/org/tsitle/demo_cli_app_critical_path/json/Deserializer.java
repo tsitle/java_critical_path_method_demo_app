@@ -2,7 +2,6 @@ package org.tsitle.demo_cli_app_critical_path.json;
 
 import com.google.gson.*;
 import io.github.tsitle.criticalpath.exceptions.InvalidInputDataException;
-import io.github.tsitle.criticalpath.rawdata.filereaders.AbstractReadRawData;
 import org.jspecify.annotations.NonNull;
 
 import java.io.*;
@@ -73,7 +72,7 @@ public final class Deserializer {
 			throws InvalidInputDataException, IOException {
 		final String errorMsgPrefix = "Error in file: '" + rscFilename + "': ";
 
-		try (InputStream is = AbstractReadRawData.class.getClassLoader().getResourceAsStream(rscFilename)) {
+		try (InputStream is = Deserializer.class.getClassLoader().getResourceAsStream(rscFilename)) {
 			if (is == null) {
 				throw new IOException("file '" + rscFilename + "' not found");
 			}
