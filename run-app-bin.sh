@@ -31,10 +31,6 @@ elif ! command -v "${LVAR_GRADLE_EXE}" >/dev/null 2>&1; then
 	exit 1
 fi
 
-if [ ! -x "${LVAR_BIN_EXE}" ]; then
-	"${LVAR_GRADLE_EXE}" :jlink || exit 1
-fi
-
 # ----------------------------------------------------------------------------------------------------------------------
 
 _getCpuArch() {
@@ -81,6 +77,10 @@ LVAR_ARCH="$(_getCpuArch)"
 # ----------------------------------------------------------------------------------------------------------------------
 
 LVAR_BIN_EXE="$(echo -n "${LCFG_BIN_EXE_TEMPLATE}" | sed -e "s/###OS###/${LVAR_OS}/" -e "s/###ARCH###/${LVAR_ARCH}/")"
+
+if [ ! -x "${LVAR_BIN_EXE}" ]; then
+	"${LVAR_GRADLE_EXE}" :jlink || exit 1
+fi
 
 if [ ! -x "${LVAR_BIN_EXE}" ]; then
 	echo "$0: could not find executable '${LVAR_BIN_EXE}'. Aborting" >&2
