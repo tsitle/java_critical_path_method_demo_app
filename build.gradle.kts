@@ -48,12 +48,12 @@ repositories {
 }
 
 dependencies {
-	testImplementation(platform("org.junit:junit-bom:5.10.0"))
-	testImplementation("org.junit.jupiter:junit-jupiter")
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	//implementation("org.jspecify:jspecify:1.0.0")  // transitive dependency of io.github.tsitle.criticalpath
+
 	implementation("com.google.guava:guava:33.5.0-jre")  // for HTML escaping
+
 	implementation("com.google.code.gson:gson:2.13.2")  // for JSON deserialization
+
 	implementation("info.picocli:picocli:4.7.7")  // for CLI arguments parsing
 
 	// TS lib criticalpath
