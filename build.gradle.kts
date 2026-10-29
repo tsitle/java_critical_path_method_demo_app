@@ -2,7 +2,6 @@ plugins {
 	id("java")
 	id("application")
 	id("org.beryx.jlink") version "3.2.0"
-	id("com.google.osdetector") version "1.7.3"  // see https://github.com/google/osdetector-gradle-plugin
 }
 
 group = "org.tsitle.demo_cli_app_critical_path"
@@ -32,26 +31,11 @@ fun getCpuArchitecture() : String {
 	}
 }
 
-fun getLinuxDistroType() : String {
-	if (getOperatingSystemName() != "linux") {
-		return "none"
-	}
-	val tmpRel = osdetector.release
-	if (tmpRel.isLike("debian")) {
-		return "debian"
-	}
-	if (tmpRel.isLike("redhat") || tmpRel.isLike("fedora")) {
-		return "redhat"
-	}
-	throw Error("Linux distribution type '${tmpRel}' not supported")
-}
-
 val osName: String = getOperatingSystemName()
 val cpuArch: String = getCpuArchitecture()
 if (osName == "win" && cpuArch != "x64") {
 	throw Error("Cannot build for ${osName}-${cpuArch}")
 }
-val lxDistroType: String = getLinuxDistroType()
 
 println("Host: ${osName}-${cpuArch}")
 
@@ -72,11 +56,9 @@ dependencies {
 	implementation("com.google.code.gson:gson:2.13.2")  // for JSON deserialization
 	implementation("info.picocli:picocli:4.7.7")  // for CLI arguments parsing
 
-	// use official release:
-	implementation("io.github.tsitle:criticalpath:1.0.1")
-
-	// for local development:
-	//implementation(":lib_critical_path_method:1.0.1")
+	// TS lib criticalpath
+	implementation("io.github.tsitle:criticalpath:1.0.1")  // use official release
+	//implementation(":lib_critical_path_method:1.0.1")  // for local development
 }
 
 java {
